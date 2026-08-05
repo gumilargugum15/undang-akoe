@@ -1,0 +1,276 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Marketing landing page only — distinct from --font-head/--font-body/--font-script
+     above (those are runtime-injected per-invitation theme fonts) and from --primary
+     (shared by every dashboard/admin screen) so neither gets disturbed. */
+  --font-landing-display: "Plus Jakarta Sans", sans-serif;
+  --font-landing-sans: "Inter", sans-serif;
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  /* Vivid violet — modern admin/dashboard brand accent (buttons, links, focus rings,
+     sidebar active states). Landing page is unaffected: it always hardcodes --brand
+     (warm gold) on its CTAs rather than relying on this default. */
+  --primary: oklch(0.556 0.253 293.51);
+  --primary-foreground: oklch(0.984 0.005 293.51);
+  --secondary: oklch(0.968 0.007 247.896);
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --muted: oklch(0.968 0.007 247.896);
+  --muted-foreground: oklch(0.554 0.046 257.417);
+  --accent: oklch(0.968 0.007 247.896);
+  --accent-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.606 0.24 293.51);
+  --chart-1: oklch(0.556 0.253 293.51);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.129 0.042 264.695);
+  --sidebar-primary: oklch(0.556 0.253 293.51);
+  --sidebar-primary-foreground: oklch(0.984 0.005 293.51);
+  --sidebar-accent: oklch(0.94 0.035 293.51);
+  --sidebar-accent-foreground: oklch(0.47 0.23 293.51);
+  --sidebar-border: oklch(0.93 0.012 293.51);
+  --sidebar-ring: oklch(0.606 0.24 293.51);
+
+  /* Warm gold — landing page brand accent, echoing the "Elegant Classic" theme's palette. */
+  --brand: oklch(0.72 0.14 80);
+  --brand-foreground: oklch(0.22 0.03 80);
+}
+
+.dark {
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.646 0.24 293.51);
+  --primary-foreground: oklch(0.984 0.005 293.51);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.646 0.24 293.51);
+  --chart-1: oklch(0.646 0.24 293.51);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.646 0.24 293.51);
+  --sidebar-primary-foreground: oklch(0.984 0.005 293.51);
+  --sidebar-accent: oklch(0.32 0.09 293.51);
+  --sidebar-accent-foreground: oklch(0.82 0.15 293.51);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.646 0.24 293.51);
+
+  --brand: oklch(0.78 0.13 80);
+  --brand-foreground: oklch(0.18 0.02 80);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+}
+
+/* ---------------------------------------------------------------
+   Undangan Digital — dynamic theme tokens.
+   Values are injected at runtime by InvitationThemeProvider.
+   --------------------------------------------------------------- */
+@theme inline {
+  --color-inv-bg: var(--inv-bg);
+  --color-inv-bg-alt: var(--inv-bg-alt);
+  --color-inv-surface: var(--inv-surface);
+  --color-inv-primary: var(--inv-primary);
+  --color-inv-primary-fg: var(--inv-primary-fg);
+  --color-inv-secondary: var(--inv-secondary);
+  --color-inv-accent: var(--inv-accent);
+  --color-inv-text: var(--inv-text);
+  --color-inv-muted: var(--inv-muted);
+  --color-inv-border: var(--inv-border);
+  --font-head: var(--inv-font-head);
+  --font-body: var(--inv-font-body);
+  --font-script: var(--inv-font-script);
+}
+
+@utility inv-surface {
+  background-color: var(--inv-surface);
+  border: 1px solid var(--inv-border);
+  border-radius: var(--inv-card-radius);
+  box-shadow: var(--inv-shadow);
+}
+
+@utility inv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--inv-font-body);
+  font-weight: 600;
+  letter-spacing: var(--inv-tracking);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 0.9rem 1.9rem;
+  border-radius: var(--inv-radius);
+  background-color: var(--inv-primary);
+  color: var(--inv-primary-fg);
+  box-shadow: var(--inv-btn-shadow);
+  transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
+  &:hover {
+    transform: translateY(-2px);
+    opacity: 0.92;
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@utility inv-btn-outline {
+  background-color: transparent;
+  color: var(--inv-primary);
+  border: 1px solid var(--inv-primary);
+  box-shadow: none;
+}
+
+@utility inv-field {
+  width: 100%;
+  font-family: var(--inv-font-body);
+  color: var(--inv-text);
+  background-color: color-mix(in srgb, var(--inv-bg) 60%, transparent);
+  border: 1px solid var(--inv-border);
+  border-radius: var(--inv-radius);
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  &:focus {
+    border-color: var(--inv-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--inv-primary) 18%, transparent);
+  }
+}
+
+@utility inv-heading {
+  font-family: var(--inv-font-head);
+  font-weight: var(--inv-head-weight);
+  color: var(--inv-text);
+  letter-spacing: var(--inv-tracking);
+}
+
+@utility inv-eyebrow {
+  font-family: var(--inv-font-body);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--inv-secondary);
+}
+
+@keyframes inv-shimmer {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: rotate(45deg) scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(45deg) scale(1.35);
+  }
+}
+
+@utility inv-shimmer-dot {
+  animation: inv-shimmer 2.6s ease-in-out infinite;
+}
+
+[data-theme="luxury"] .inv-glow {
+  text-shadow: 0 0 26px color-mix(in srgb, var(--inv-primary) 55%, transparent);
+}
+
+html {
+  scroll-behavior: smooth;
+}
