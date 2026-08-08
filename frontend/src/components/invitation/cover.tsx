@@ -1,9 +1,32 @@
-import { motion } from "motion/react";
+import { motion, type TargetAndTransition, type Transition } from "motion/react";
 import { Mail } from "lucide-react";
 import { useInvitationData } from "./invitation-data-provider";
 import { CornerOrnament, Divider, RoseGarland, WeddingFlowers } from "./ornaments";
 import { useInvitationTheme } from "./theme-provider";
+import type { RevealKind } from "@/lib/themes";
 import galleryHero from "@/assets/gallery-4.jpg";
+
+// How the cover exits when a guest taps "Buka Undangan" — keyed to the same per-theme
+// `reveal` used for in-page scroll reveals (see reveal.tsx), so the moment that actually
+// matters most (opening the invitation) also varies by theme instead of always the same
+// blur+scale regardless of which theme is active.
+const EXIT_VARIANTS: Record<RevealKind, TargetAndTransition> = {
+  fade: { opacity: 0, y: -24 },
+  slide: { opacity: 0, x: 90 },
+  zoom: { opacity: 0, scale: 1.1, rotate: 1.5 },
+  blur: { opacity: 0, scale: 1.04, filter: "blur(10px)" },
+  flip: { opacity: 0, rotateX: 55, y: -16 },
+  // Transform-only, matching reveal.tsx's curtain — see that file for why clip-path is
+  // avoided here (a real rendering bug, not just a style preference).
+  curtain: { opacity: 0, x: -110, skewX: 8 },
+  bounce: { opacity: 0, scale: 0.86, y: 36 },
+};
+
+const EXIT_TRANSITION: Partial<Record<RevealKind, Transition>> = {
+  curtain: { duration: 0.6, ease: [0.65, 0, 0.35, 1] },
+  flip: { duration: 0.6 },
+  bounce: { duration: 0.5, ease: "easeIn" },
+};
 
 const COVER_EYEBROW: Record<string, string> = {
   wedding: "The Wedding Of",
@@ -45,8 +68,8 @@ export function Cover({ onOpen, guest }: { onOpen: () => void; guest: string }) 
           : "relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 py-16 text-center"
       }
       style={{ backgroundColor: "var(--inv-bg)", backgroundImage: "var(--inv-texture)" }}
-      exit={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
-      transition={{ duration: 0.7 }}
+      exit={EXIT_VARIANTS[theme.reveal]}
+      transition={EXIT_TRANSITION[theme.reveal] ?? { duration: 0.7 }}
     >
       {customCoverPhoto ? (
         // A contained block at the top, not a full-bleed background behind the text — a

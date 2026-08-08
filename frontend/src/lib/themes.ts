@@ -1,5 +1,5 @@
 export type OrnamentKind = "floral" | "line" | "leaf" | "shimmer";
-export type RevealKind = "fade" | "slide" | "zoom" | "blur";
+export type RevealKind = "fade" | "slide" | "zoom" | "blur" | "flip" | "curtain" | "bounce";
 
 export type ThemeTokens = {
   bg: string;

@@ -146,16 +146,12 @@ class InvitationService
     /**
      * Dedicated theme-switch action (spec: POST/PATCH .../change-theme) — resets any prior
      * per-invitation color/font overrides, since they were tuned against the old theme's token
-     * set and could look wrong (or simply be irrelevant) against the new one.
+     * set and could look wrong (or simply be irrelevant) against the new one. Allowed at any
+     * status (including published) so a customer can keep trying themes until it matches what
+     * they pictured — it's a purely cosmetic change, not a content/business-rule concern.
      */
     public function changeTheme(Invitation $invitation, int $themeId): Invitation
     {
-        if ($invitation->status !== 'draft') {
-            throw ValidationException::withMessages([
-                'status' => ['Tema hanya bisa diganti selama undangan masih berstatus draft.'],
-            ]);
-        }
-
         return $this->invitations->update($invitation, [
             'theme_id' => $themeId,
             'theme_settings' => null,

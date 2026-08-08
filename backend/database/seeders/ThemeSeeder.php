@@ -199,6 +199,265 @@ class ThemeSeeder extends Seeder
                 ],
                 'supports_dark_mode' => true,
             ],
+            ...$this->weddingDarkThemes(),
+        ];
+    }
+
+    /**
+     * Dark-elegant wedding variants alongside "Dark Luxury" — each a distinct color story
+     * rather than palette swaps of the same idea, split across two methods (+ two batches of
+     * `reveal`/transition variety) to keep each one a reasonable size.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function weddingDarkThemes(): array
+    {
+        return [...$this->weddingDarkThemesClassic(), ...$this->weddingDarkThemesExtra()];
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function weddingDarkThemesClassic(): array
+    {
+        return [
+            [
+                'name' => 'Midnight Emerald',
+                'slug' => 'midnight-emerald',
+                'description' => 'Hijau zamrud gelap & emas antik, botanical dan mewah',
+                'config' => [
+                    'ornament' => 'floral',
+                    'reveal' => 'fade',
+                    'radius' => '0.5rem',
+                    'cardRadius' => '1.75rem',
+                    'shadow' => '0 30px 70px -40px rgba(205, 165, 69, 0.35)',
+                    'buttonShadow' => '0 0 26px -6px rgba(205, 165, 69, 0.5)',
+                    'letterSpacing' => '0.05em',
+                    'headWeight' => '500',
+                    'fonts' => [
+                        'head' => '"Playfair Display", serif',
+                        'body' => '"Cormorant Garamond", serif',
+                        'script' => '"Playfair Display", serif',
+                    ],
+                    'tokens' => [
+                        'bg' => '#0a1712', 'bgAlt' => '#102019', 'surface' => '#142a21',
+                        'primary' => '#cda545', 'primaryFg' => '#0a1712', 'secondary' => '#1f4a38',
+                        'accent' => '#e6d3a0', 'text' => '#eef0ea', 'muted' => '#8fa89a', 'border' => '#24473a',
+                    ],
+                    'swatch' => ['#0a1712', '#1f4a38', '#cda545', '#e6d3a0'],
+                    'texture' => 'radial-gradient(circle at 50% -10%, rgba(205,165,69,0.14), transparent 55%), radial-gradient(circle at 10% 90%, rgba(31,74,56,0.5), transparent 55%)',
+                ],
+                'supports_dark_mode' => true,
+            ],
+            [
+                'name' => 'Onyx Rose',
+                'slug' => 'onyx-rose',
+                'description' => 'Hitam onyx dengan dusty rose & kilau perak yang romantis',
+                'config' => [
+                    'ornament' => 'shimmer',
+                    'reveal' => 'blur',
+                    'radius' => '0.375rem',
+                    'cardRadius' => '1rem',
+                    'shadow' => '0 30px 70px -40px rgba(201, 139, 160, 0.4)',
+                    'buttonShadow' => '0 0 26px -6px rgba(201, 139, 160, 0.55)',
+                    'letterSpacing' => '0.1em',
+                    'headWeight' => '500',
+                    'fonts' => [
+                        'head' => '"Cormorant Garamond", serif',
+                        'body' => '"Inter", sans-serif',
+                        'script' => '"Cormorant Garamond", serif',
+                    ],
+                    'tokens' => [
+                        'bg' => '#120c10', 'bgAlt' => '#1c1216', 'surface' => '#221720',
+                        'primary' => '#c98ba0', 'primaryFg' => '#120c10', 'secondary' => '#3a2430',
+                        'accent' => '#e3c3ce', 'text' => '#f3e8ec', 'muted' => '#a0868f', 'border' => '#35242c',
+                    ],
+                    'swatch' => ['#120c10', '#3a2430', '#c98ba0', '#e3c3ce'],
+                    'texture' => 'radial-gradient(circle at 50% -10%, rgba(201,139,160,0.16), transparent 55%), radial-gradient(circle at 90% 90%, rgba(58,36,48,0.6), transparent 55%)',
+                ],
+                'supports_dark_mode' => true,
+            ],
+            [
+                'name' => 'Velvet Wine',
+                'slug' => 'velvet-wine',
+                'description' => 'Merah anggur pekat & emas champagne, mewah bak beludru',
+                'config' => [
+                    'ornament' => 'floral',
+                    'reveal' => 'fade',
+                    'radius' => '0.5rem',
+                    'cardRadius' => '1.75rem',
+                    'shadow' => '0 30px 70px -40px rgba(201, 162, 74, 0.35)',
+                    'buttonShadow' => '0 0 26px -6px rgba(201, 162, 74, 0.5)',
+                    'letterSpacing' => '0.08em',
+                    'headWeight' => '600',
+                    'fonts' => [
+                        'head' => '"Marcellus", serif',
+                        'body' => '"Cormorant Garamond", serif',
+                        'script' => '"Playfair Display", serif',
+                    ],
+                    'tokens' => [
+                        'bg' => '#140a0d', 'bgAlt' => '#1f1014', 'surface' => '#251218',
+                        'primary' => '#c9a24a', 'primaryFg' => '#140a0d', 'secondary' => '#4a1620',
+                        'accent' => '#e0c68a', 'text' => '#f2e9e6', 'muted' => '#a3888c', 'border' => '#3a1a20',
+                    ],
+                    'swatch' => ['#140a0d', '#4a1620', '#c9a24a', '#e0c68a'],
+                    'texture' => 'radial-gradient(circle at 50% -10%, rgba(201,162,74,0.15), transparent 55%), radial-gradient(circle at 15% 90%, rgba(74,22,32,0.55), transparent 55%)',
+                ],
+                'supports_dark_mode' => true,
+            ],
+            [
+                'name' => 'Starlit Sapphire',
+                'slug' => 'starlit-sapphire',
+                'description' => 'Navy gelap & perak platinum, elegan bernuansa langit malam',
+                'config' => [
+                    'ornament' => 'shimmer',
+                    'reveal' => 'blur',
+                    'radius' => '0.25rem',
+                    'cardRadius' => '0.25rem',
+                    'shadow' => '0 30px 70px -40px rgba(170, 184, 217, 0.4)',
+                    'buttonShadow' => '0 0 28px -6px rgba(215, 220, 230, 0.5)',
+                    'letterSpacing' => '0.22em',
+                    'headWeight' => '600',
+                    'fonts' => [
+                        'head' => '"Marcellus", serif',
+                        'body' => '"Inter", sans-serif',
+                        'script' => '"Marcellus", serif',
+                    ],
+                    'tokens' => [
+                        'bg' => '#070c18', 'bgAlt' => '#0c1526', 'surface' => '#101c33',
+                        'primary' => '#d7dce6', 'primaryFg' => '#070c18', 'secondary' => '#2a3b63',
+                        'accent' => '#aab8d9', 'text' => '#eef1f7', 'muted' => '#8b96ad', 'border' => '#263756',
+                    ],
+                    'swatch' => ['#070c18', '#2a3b63', '#d7dce6', '#aab8d9'],
+                    'texture' => 'radial-gradient(circle at 50% -10%, rgba(215,220,230,0.12), transparent 55%), radial-gradient(circle at 85% 85%, rgba(42,59,99,0.6), transparent 55%)',
+                ],
+                'supports_dark_mode' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Second batch of dark wedding variants — also introduces three new `reveal` transition
+     * kinds (flip, curtain, bounce) on top of the original fade/slide/zoom/blur, so the
+     * catalog's motion feels as varied as its palettes (see reveal.tsx/cover.tsx).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function weddingDarkThemesExtra(): array
+    {
+        return [
+            [
+                'name' => 'Obsidian Plum',
+                'slug' => 'obsidian-plum',
+                'description' => 'Ungu plum gelap & rose gold, romantis dan misterius',
+                'config' => [
+                    'ornament' => 'leaf',
+                    'reveal' => 'curtain',
+                    'radius' => '1.25rem',
+                    'cardRadius' => '2rem',
+                    'shadow' => '0 30px 70px -40px rgba(202, 160, 107, 0.35)',
+                    'buttonShadow' => '0 0 26px -6px rgba(202, 160, 107, 0.5)',
+                    'letterSpacing' => '0.06em',
+                    'headWeight' => '500',
+                    'fonts' => [
+                        'head' => '"Playfair Display", serif',
+                        'body' => '"Inter", sans-serif',
+                        'script' => '"Playfair Display", serif',
+                    ],
+                    'tokens' => [
+                        'bg' => '#150c17', 'bgAlt' => '#1f1220', 'surface' => '#251629',
+                        'primary' => '#caa06b', 'primaryFg' => '#150c17', 'secondary' => '#3d2142',
+                        'accent' => '#e0c9a8', 'text' => '#f1e8f0', 'muted' => '#a189a8', 'border' => '#3a2440',
+                    ],
+                    'swatch' => ['#150c17', '#3d2142', '#caa06b', '#e0c9a8'],
+                    'texture' => 'radial-gradient(circle at 50% -10%, rgba(202,160,107,0.14), transparent 55%), radial-gradient(circle at 12% 90%, rgba(61,33,66,0.6), transparent 55%)',
+                ],
+                'supports_dark_mode' => true,
+            ],
+            [
+                'name' => 'Noir Blanc',
+                'slug' => 'noir-blanc',
+                'description' => 'Hitam pekat & putih mutiara, kontras tegas nan mewah',
+                'config' => [
+                    'ornament' => 'line',
+                    'reveal' => 'flip',
+                    'radius' => '0.125rem',
+                    'cardRadius' => '0.125rem',
+                    'shadow' => '0 1px 0 0 rgba(245,243,238,0.12)',
+                    'buttonShadow' => 'none',
+                    'letterSpacing' => '0.2em',
+                    'headWeight' => '600',
+                    'fonts' => [
+                        'head' => '"Plus Jakarta Sans", sans-serif',
+                        'body' => '"Plus Jakarta Sans", sans-serif',
+                        'script' => '"Plus Jakarta Sans", sans-serif',
+                    ],
+                    'tokens' => [
+                        'bg' => '#0a0a0a', 'bgAlt' => '#141414', 'surface' => '#1a1a1a',
+                        'primary' => '#f2f0ec', 'primaryFg' => '#0a0a0a', 'secondary' => '#3d3d3d',
+                        'accent' => '#d9d4c9', 'text' => '#f5f3ee', 'muted' => '#9c9992', 'border' => '#2c2c2c',
+                    ],
+                    'swatch' => ['#0a0a0a', '#3d3d3d', '#f2f0ec', '#d9d4c9'],
+                    'texture' => 'none',
+                ],
+                'supports_dark_mode' => true,
+            ],
+            [
+                'name' => 'Copper Nights',
+                'slug' => 'copper-nights',
+                'description' => 'Charcoal gelap & tembaga metalik, hangat dan industrial-elegan',
+                'config' => [
+                    'ornament' => 'shimmer',
+                    'reveal' => 'bounce',
+                    'radius' => '0.375rem',
+                    'cardRadius' => '0.5rem',
+                    'shadow' => '0 30px 70px -40px rgba(201, 123, 69, 0.4)',
+                    'buttonShadow' => '0 0 26px -6px rgba(201, 123, 69, 0.55)',
+                    'letterSpacing' => '0.15em',
+                    'headWeight' => '600',
+                    'fonts' => [
+                        'head' => '"Marcellus", serif',
+                        'body' => '"Inter", sans-serif',
+                        'script' => '"Marcellus", serif',
+                    ],
+                    'tokens' => [
+                        'bg' => '#140f0c', 'bgAlt' => '#1d1611', 'surface' => '#241b15',
+                        'primary' => '#c97b45', 'primaryFg' => '#140f0c', 'secondary' => '#3a2a1e',
+                        'accent' => '#e0a578', 'text' => '#f2ece4', 'muted' => '#a3948a', 'border' => '#3d2c20',
+                    ],
+                    'swatch' => ['#140f0c', '#3a2a1e', '#c97b45', '#e0a578'],
+                    'texture' => 'radial-gradient(circle at 50% -10%, rgba(201,123,69,0.16), transparent 55%), radial-gradient(circle at 90% 90%, rgba(58,42,30,0.6), transparent 55%)',
+                ],
+                'supports_dark_mode' => true,
+            ],
+            [
+                'name' => 'Amethyst Dusk',
+                'slug' => 'amethyst-dusk',
+                'description' => 'Ungu ametis senja & perak lembut, misterius dan mempesona',
+                'config' => [
+                    'ornament' => 'floral',
+                    'reveal' => 'blur',
+                    'radius' => '0.5rem',
+                    'cardRadius' => '1.75rem',
+                    'shadow' => '0 30px 70px -40px rgba(167, 139, 201, 0.35)',
+                    'buttonShadow' => '0 0 26px -6px rgba(167, 139, 201, 0.5)',
+                    'letterSpacing' => '0.06em',
+                    'headWeight' => '500',
+                    'fonts' => [
+                        'head' => '"Playfair Display", serif',
+                        'body' => '"Cormorant Garamond", serif',
+                        'script' => '"Playfair Display", serif',
+                    ],
+                    'tokens' => [
+                        'bg' => '#100b1a', 'bgAlt' => '#171025', 'surface' => '#1d1530',
+                        'primary' => '#a78bc9', 'primaryFg' => '#100b1a', 'secondary' => '#2e2350',
+                        'accent' => '#cdb8e8', 'text' => '#ece8f5', 'muted' => '#9990ad', 'border' => '#332a52',
+                    ],
+                    'swatch' => ['#100b1a', '#2e2350', '#a78bc9', '#cdb8e8'],
+                    'texture' => 'radial-gradient(circle at 50% -10%, rgba(167,139,201,0.14), transparent 55%), radial-gradient(circle at 15% 90%, rgba(46,35,80,0.55), transparent 55%)',
+                ],
+                'supports_dark_mode' => true,
+            ],
         ];
     }
 

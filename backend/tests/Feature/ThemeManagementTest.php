@@ -227,15 +227,38 @@ class ThemeManagementTest extends TestCase
     }
 
     #[Test]
-    public function a_customer_cannot_change_the_theme_of_a_published_invitation(): void
+    public function a_customer_can_change_the_theme_of_a_published_invitation(): void
+    {
+        $owner = User::factory()->create();
+        $invitation = Invitation::factory()->for($owner, 'user')->published()->create([
+            'theme_settings' => ['tokens' => ['primary' => '#ff0000']],
+        ]);
+        $newTheme = Theme::factory()->create(['status' => 'published']);
+
+        // Cosmetic-only change — allowed at any status so a customer can keep trying themes
+        // until it matches what they pictured, even after the invitation is already live.
+        $this->apiAs($owner)->patchJson("/api/invitations/{$invitation->id}/change-theme", [
+            'theme_id' => $newTheme->id,
+        ])->assertOk();
+
+        $invitation->refresh();
+        $this->assertSame($newTheme->id, $invitation->theme_id);
+        $this->assertNull($invitation->theme_settings);
+        $this->assertSame('published', $invitation->status);
+    }
+
+    #[Test]
+    public function the_general_update_endpoint_also_allows_changing_the_theme_on_a_published_invitation(): void
     {
         $owner = User::factory()->create();
         $invitation = Invitation::factory()->for($owner, 'user')->published()->create();
         $newTheme = Theme::factory()->create(['status' => 'published']);
 
-        $this->apiAs($owner)->patchJson("/api/invitations/{$invitation->id}/change-theme", [
+        $this->apiAs($owner)->putJson("/api/invitations/{$invitation->id}", [
             'theme_id' => $newTheme->id,
-        ])->assertUnprocessable()->assertJsonValidationErrors(['status']);
+        ])->assertOk();
+
+        $this->assertSame($newTheme->id, $invitation->fresh()->theme_id);
     }
 
     #[Test]

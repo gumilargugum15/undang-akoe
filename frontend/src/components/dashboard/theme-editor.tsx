@@ -16,12 +16,10 @@ interface ThemeOption {
 export function ThemeEditor({
   invitationId,
   currentThemeId,
-  locked,
   onChanged,
 }: {
   invitationId: number;
   currentThemeId: number | null;
-  locked: boolean;
   onChanged?: (themeId: number) => void;
 }) {
   const [themes, setThemes] = useState<ThemeOption[]>([]);
@@ -39,7 +37,7 @@ export function ThemeEditor({
   }, []);
 
   async function handleSelect(themeId: number) {
-    if (locked || themeId === currentThemeId) return;
+    if (themeId === currentThemeId) return;
     setSavingId(themeId);
     try {
       await customerApi.patch(`/invitations/${invitationId}/change-theme`, { theme_id: themeId });
@@ -66,12 +64,6 @@ export function ThemeEditor({
         <CardTitle>Tema Undangan</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {locked && (
-          <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-            Tema tidak bisa diganti karena undangan ini sudah dipublikasikan. Batalkan publikasi
-            terlebih dahulu untuk mengganti tema.
-          </p>
-        )}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {themes.map((t) => {
             const active = t.id === currentThemeId;
@@ -80,11 +72,11 @@ export function ThemeEditor({
               <button
                 key={t.id}
                 type="button"
-                disabled={locked || savingId !== null}
+                disabled={savingId !== null}
                 onClick={() => handleSelect(t.id)}
                 className={`group overflow-hidden rounded-lg border text-left transition-opacity disabled:cursor-not-allowed ${
                   active ? "border-primary ring-2 ring-primary" : "border-border"
-                } ${locked && !active ? "opacity-60" : ""}`}
+                }`}
               >
                 {t.thumbnail ? (
                   <img src={t.thumbnail} alt={t.name} className="h-28 w-full object-cover" />
@@ -106,11 +98,9 @@ export function ThemeEditor({
             );
           })}
         </div>
-        {!locked && (
-          <p className="text-xs text-muted-foreground">
-            Klik salah satu tema untuk langsung menerapkannya.
-          </p>
-        )}
+        <p className="text-xs text-muted-foreground">
+          Klik salah satu tema untuk langsung menerapkannya.
+        </p>
       </CardContent>
     </Card>
   );

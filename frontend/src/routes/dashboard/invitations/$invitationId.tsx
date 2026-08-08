@@ -170,7 +170,6 @@ function EditInvitationPage() {
             <ThemeEditor
               invitationId={invitation.id}
               currentThemeId={invitation.theme?.id ?? null}
-              locked={invitation.status !== "draft"}
               onChanged={loadInvitation}
             />
           </TabsContent>
