@@ -24,12 +24,17 @@ class PublicInvitationResource extends JsonResource
     public function toArray(Request $request): array
     {
         $config = $this->resolvedThemeConfig();
+        $coverPhoto = $this->cover_photo ? Storage::disk('public')->url($this->cover_photo) : null;
+        // Falls back to the opening-gate cover photo when no separate one is set — most
+        // invitations only ever upload one photo, so the Home section still gets a header.
+        $homeCoverPhoto = $this->home_cover_photo ? Storage::disk('public')->url($this->home_cover_photo) : $coverPhoto;
 
         return [
             'title' => $this->title,
             'slug' => $this->slug,
             'event_category' => $this->event_category,
-            'cover_photo' => $this->cover_photo ? Storage::disk('public')->url($this->cover_photo) : null,
+            'cover_photo' => $coverPhoto,
+            'home_cover_photo' => $homeCoverPhoto,
             'theme' => [
                 'id' => $this->theme->slug,
                 'name' => $this->theme->name,

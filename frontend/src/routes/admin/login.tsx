@@ -7,7 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { adminApi, AdminApiError } from "@/lib/admin-api";
-import { getAdminSession, isAdminSession, setAdminSession, type AdminSession } from "@/lib/admin-auth";
+import {
+  getAdminSession,
+  isAdminSession,
+  setAdminSession,
+  type AdminSession,
+} from "@/lib/admin-auth";
 
 export const Route = createFileRoute("/admin/login")({
   component: AdminLoginPage,
@@ -55,7 +60,7 @@ function AdminLoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Admin Login</CardTitle>
-          <CardDescription>Undangan Digital — Panel Admin</CardDescription>
+          <CardDescription>Undang Akoe — Panel Admin</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

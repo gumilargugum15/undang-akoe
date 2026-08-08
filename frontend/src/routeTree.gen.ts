@@ -17,6 +17,8 @@ import { Route as AdminBannersRouteImport } from './routes/admin/banners'
 import { Route as AdminFaqsRouteImport } from './routes/admin/faqs'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminPackagesRouteImport } from './routes/admin/packages'
+import { Route as AdminPaymentSettingsRouteImport } from './routes/admin/payment-settings'
+import { Route as AdminTransactionsRouteImport } from './routes/admin/transactions'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardLoginRouteImport } from './routes/dashboard/login'
@@ -64,6 +66,16 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
 const AdminPackagesRoute = AdminPackagesRouteImport.update({
   id: '/admin/packages',
   path: '/admin/packages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPaymentSettingsRoute = AdminPaymentSettingsRouteImport.update({
+  id: '/admin/payment-settings',
+  path: '/admin/payment-settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/admin/transactions',
+  path: '/admin/transactions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -116,6 +128,8 @@ export interface FileRoutesByFullPath {
   '/admin/faqs': typeof AdminFaqsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/packages': typeof AdminPackagesRoute
+  '/admin/payment-settings': typeof AdminPaymentSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/dashboard/login': typeof DashboardLoginRoute
   '/dashboard/register': typeof DashboardRegisterRoute
@@ -134,6 +148,8 @@ export interface FileRoutesByTo {
   '/admin/faqs': typeof AdminFaqsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/packages': typeof AdminPackagesRoute
+  '/admin/payment-settings': typeof AdminPaymentSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/dashboard/login': typeof DashboardLoginRoute
   '/dashboard/register': typeof DashboardRegisterRoute
@@ -153,6 +169,8 @@ export interface FileRoutesById {
   '/admin/faqs': typeof AdminFaqsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/packages': typeof AdminPackagesRoute
+  '/admin/payment-settings': typeof AdminPaymentSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/users': typeof AdminUsersRoute
   '/dashboard/login': typeof DashboardLoginRoute
   '/dashboard/register': typeof DashboardRegisterRoute
@@ -173,6 +191,8 @@ export interface FileRouteTypes {
     | '/admin/faqs'
     | '/admin/login'
     | '/admin/packages'
+    | '/admin/payment-settings'
+    | '/admin/transactions'
     | '/admin/users'
     | '/dashboard/login'
     | '/dashboard/register'
@@ -191,6 +211,8 @@ export interface FileRouteTypes {
     | '/admin/faqs'
     | '/admin/login'
     | '/admin/packages'
+    | '/admin/payment-settings'
+    | '/admin/transactions'
     | '/admin/users'
     | '/dashboard/login'
     | '/dashboard/register'
@@ -209,6 +231,8 @@ export interface FileRouteTypes {
     | '/admin/faqs'
     | '/admin/login'
     | '/admin/packages'
+    | '/admin/payment-settings'
+    | '/admin/transactions'
     | '/admin/users'
     | '/dashboard/login'
     | '/dashboard/register'
@@ -228,6 +252,8 @@ export interface RootRouteChildren {
   AdminFaqsRoute: typeof AdminFaqsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminPackagesRoute: typeof AdminPackagesRoute
+  AdminPaymentSettingsRoute: typeof AdminPaymentSettingsRoute
+  AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   DashboardLoginRoute: typeof DashboardLoginRoute
   DashboardRegisterRoute: typeof DashboardRegisterRoute
@@ -297,6 +323,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPackagesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/payment-settings': {
+      id: '/admin/payment-settings'
+      path: '/admin/payment-settings'
+      fullPath: '/admin/payment-settings'
+      preLoaderRoute: typeof AdminPaymentSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/admin/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/admin/users'
@@ -364,6 +404,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminFaqsRoute: AdminFaqsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminPackagesRoute: AdminPackagesRoute,
+  AdminPaymentSettingsRoute: AdminPaymentSettingsRoute,
+  AdminTransactionsRoute: AdminTransactionsRoute,
   AdminUsersRoute: AdminUsersRoute,
   DashboardLoginRoute: DashboardLoginRoute,
   DashboardRegisterRoute: DashboardRegisterRoute,

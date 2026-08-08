@@ -20,4 +20,10 @@ interface InvitationRepositoryInterface
     public function delete(Invitation $invitation): void;
 
     public function slugExists(string $slug, ?int $exceptId = null): bool;
+
+    /**
+     * Count of this user's other invitations currently counted as "active" (published and
+     * not yet expired) — used to enforce a package's `limits.max_active_invitations`.
+     */
+    public function countActivePublishedForUser(int $userId, ?int $exceptInvitationId = null): int;
 }

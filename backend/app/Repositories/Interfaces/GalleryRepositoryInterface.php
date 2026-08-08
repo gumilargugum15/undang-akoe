@@ -14,6 +14,12 @@ interface GalleryRepositoryInterface
      */
     public function forInvitation(Invitation $invitation, array $filters = []): Collection;
 
+    /**
+     * Counts only type=photo items — videos (mp4/YouTube) don't count against a package's
+     * max_photos, which is specifically a photo limit.
+     */
+    public function countPhotosForInvitation(Invitation $invitation): int;
+
     public function create(Invitation $invitation, array $data): Gallery;
 
     /**

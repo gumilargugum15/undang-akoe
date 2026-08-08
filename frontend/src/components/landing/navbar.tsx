@@ -36,7 +36,7 @@ export function LandingNavbar() {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
         <a href="#hero" className="font-landing-display text-lg font-bold tracking-tight">
-          Undangan<span className="text-brand">Digital</span>
+          Undang<span className="text-brand">Akoe</span>
         </a>
 
         <nav className="hidden items-center gap-6 lg:flex">
@@ -58,7 +58,10 @@ export function LandingNavbar() {
             </Button>
           </Link>
           <Link to="/dashboard/register">
-            <Button size="sm" className="font-landing-sans bg-brand text-brand-foreground hover:bg-brand/90">
+            <Button
+              size="sm"
+              className="font-landing-sans bg-brand text-brand-foreground hover:bg-brand/90"
+            >
               Daftar Gratis
             </Button>
           </Link>
@@ -93,7 +96,10 @@ export function LandingNavbar() {
                 </Button>
               </Link>
               <Link to="/dashboard/register" onClick={() => setMobileOpen(false)}>
-                <Button size="sm" className="w-full font-landing-sans bg-brand text-brand-foreground hover:bg-brand/90">
+                <Button
+                  size="sm"
+                  className="w-full font-landing-sans bg-brand text-brand-foreground hover:bg-brand/90"
+                >
                   Daftar Gratis
                 </Button>
               </Link>

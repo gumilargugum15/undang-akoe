@@ -59,7 +59,7 @@ export function DashboardShell({ user, children }: { user: CustomerUser; childre
               <Sparkles className="size-5" />
             </div>
             <div className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
-              <span className="font-semibold">Undangan Digital</span>
+              <span className="font-semibold">Undang Akoe</span>
               <span className="text-xs text-muted-foreground">Dashboard</span>
             </div>
           </div>

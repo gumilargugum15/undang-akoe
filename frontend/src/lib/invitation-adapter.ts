@@ -97,6 +97,7 @@ export type ApiPublicInvitation = {
   slug: string;
   event_category: string;
   cover_photo: string | null;
+  home_cover_photo: string | null;
   guest_name: string | null;
   theme: InvitationTheme;
   seo: {
@@ -118,6 +119,7 @@ export type ApiPublicInvitation = {
 export type LegacyInvitation = {
   eventCategory: string;
   coverPhoto: string | null;
+  homeCoverPhoto: string | null;
   brideShort: string;
   groomShort: string;
   brideFull: string;
@@ -136,8 +138,20 @@ export type LegacyInvitation = {
   // Generic N-per-invitation counterpart to the bride/groom fields above — only populated
   // (and only rendered, via HonoreeSection/HonoreeHomeSection/HonoreeFooterSection) for
   // non-wedding categories. Optional so every existing wedding-page consumer is untouched.
-  honorees?: { roleLabel: string; nickname: string; fullName: string; bio: string; handle: string; photo: string | null }[];
-  music: { source: "upload" | "spotify" | "youtube_music"; url: string; autoplay: boolean; loop: boolean } | null;
+  honorees?: {
+    roleLabel: string;
+    nickname: string;
+    fullName: string;
+    bio: string;
+    handle: string;
+    photo: string | null;
+  }[];
+  music: {
+    source: "upload" | "spotify" | "youtube_music";
+    url: string;
+    autoplay: boolean;
+    loop: boolean;
+  } | null;
   mapsEmbed: string;
   mapsLink: string;
   gifts: { label: string; holder: string; number: string }[];
@@ -162,7 +176,8 @@ const DEFAULT_COPY: Record<string, { greeting: string; quote: string; quoteSourc
   birthday: {
     greeting:
       "Dengan penuh syukur, kami mengundang Bapak/Ibu/Saudara/i untuk turut merayakan hari bahagia ini bersama kami.",
-    quote: "Usia bertambah, semoga berkah dan kebahagiaan turut bertambah menyertai setiap langkahmu.",
+    quote:
+      "Usia bertambah, semoga berkah dan kebahagiaan turut bertambah menyertai setiap langkahmu.",
     quoteSource: "Untaian Doa",
   },
   khitan: {
@@ -185,7 +200,8 @@ const DEFAULT_COPY: Record<string, { greeting: string; quote: string; quoteSourc
     quoteSource: "QS. Ar-Rum: 21",
   },
   corporate: {
-    greeting: "Dengan bangga, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam acara perusahaan kami.",
+    greeting:
+      "Dengan bangga, kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam acara perusahaan kami.",
     quote: "Kesuksesan adalah hasil dari kerja keras, dedikasi, dan kebersamaan tim yang solid.",
     quoteSource: "Undang Akoe",
   },
@@ -246,6 +262,7 @@ export function toLegacyInvitation(data: ApiPublicInvitation): LegacyInvitation 
   return {
     eventCategory: data.event_category,
     coverPhoto: data.cover_photo,
+    homeCoverPhoto: data.home_cover_photo,
     brideShort: bride?.nickname ?? "",
     groomShort: groom?.nickname ?? "",
     brideFull: bride?.full_name ?? "",

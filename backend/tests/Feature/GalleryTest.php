@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Invitation;
+use App\Models\Package;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -79,6 +80,78 @@ class GalleryTest extends TestCase
 
         $response->assertCreated()->assertJsonCount(3, 'data');
         $this->assertDatabaseCount('galleries', 3);
+    }
+
+    #[Test]
+    public function a_photo_upload_is_rejected_past_the_packages_max_photos_limit(): void
+    {
+        Storage::fake('public');
+        $owner = User::factory()->create();
+        $package = Package::factory()->create(['max_photos' => 1]);
+        $invitation = Invitation::factory()->for($owner, 'user')->create(['package_id' => $package->id]);
+
+        $this->apiAs($owner)->post("/api/invitations/{$invitation->id}/gallery", [
+            'type' => 'photo',
+            'file' => UploadedFile::fake()->image('a.jpg'),
+        ])->assertCreated();
+
+        $this->apiAs($owner)->post("/api/invitations/{$invitation->id}/gallery", [
+            'type' => 'photo',
+            'file' => UploadedFile::fake()->image('b.jpg'),
+        ])->assertUnprocessable()->assertJsonValidationErrors(['gallery']);
+
+        $this->assertDatabaseCount('galleries', 1);
+    }
+
+    #[Test]
+    public function a_bulk_upload_is_rejected_as_a_whole_if_it_would_exceed_max_photos(): void
+    {
+        Storage::fake('public');
+        $owner = User::factory()->create();
+        $package = Package::factory()->create(['max_photos' => 2]);
+        $invitation = Invitation::factory()->for($owner, 'user')->create(['package_id' => $package->id]);
+
+        $this->apiAs($owner)->post("/api/invitations/{$invitation->id}/gallery/bulk", [
+            'photos' => [
+                UploadedFile::fake()->image('a.jpg'),
+                UploadedFile::fake()->image('b.jpg'),
+                UploadedFile::fake()->image('c.jpg'),
+            ],
+        ])->assertUnprocessable()->assertJsonValidationErrors(['gallery']);
+
+        $this->assertDatabaseCount('galleries', 0);
+    }
+
+    #[Test]
+    public function a_video_upload_does_not_count_against_max_photos(): void
+    {
+        $owner = User::factory()->create();
+        $package = Package::factory()->create(['max_photos' => 1]);
+        $invitation = Invitation::factory()->for($owner, 'user')->create(['package_id' => $package->id]);
+
+        Storage::fake('public');
+        $this->apiAs($owner)->post("/api/invitations/{$invitation->id}/gallery", [
+            'type' => 'photo',
+            'file' => UploadedFile::fake()->image('a.jpg'),
+        ])->assertCreated();
+
+        $this->apiAs($owner)->postJson("/api/invitations/{$invitation->id}/gallery", [
+            'type' => 'video_youtube',
+            'external_url' => 'https://youtu.be/dQw4w9WgXcQ',
+        ])->assertCreated();
+    }
+
+    #[Test]
+    public function a_photo_cannot_be_added_to_an_invitation_past_its_active_period(): void
+    {
+        Storage::fake('public');
+        $owner = User::factory()->create();
+        $invitation = Invitation::factory()->for($owner, 'user')->create(['expires_at' => now()->subDay()]);
+
+        $this->apiAs($owner)->post("/api/invitations/{$invitation->id}/gallery", [
+            'type' => 'photo',
+            'file' => UploadedFile::fake()->image('a.jpg'),
+        ])->assertUnprocessable()->assertJsonValidationErrors(['invitation']);
     }
 
     #[Test]

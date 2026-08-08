@@ -18,7 +18,26 @@ class Invitation extends Model
         'wedding', 'birthday', 'khitan', 'aqiqah', 'anniversary', 'corporate', 'graduation', 'custom',
     ];
 
-    public const STATUSES = ['draft', 'published', 'expired', 'suspended'];
+    public const STATUS_DRAFT = 'draft';
+
+    public const STATUS_WAITING_PAYMENT = 'waiting_payment';
+
+    public const STATUS_PUBLISHED = 'published';
+
+    public const STATUS_EXPIRED = 'expired';
+
+    public const STATUS_ARCHIVED = 'archived';
+
+    public const STATUS_SUSPENDED = 'suspended';
+
+    public const STATUSES = [
+        self::STATUS_DRAFT,
+        self::STATUS_WAITING_PAYMENT,
+        self::STATUS_PUBLISHED,
+        self::STATUS_EXPIRED,
+        self::STATUS_ARCHIVED,
+        self::STATUS_SUSPENDED,
+    ];
 
     /**
      * Mirrors the DB-level default so a freshly-created instance reflects it
@@ -43,6 +62,8 @@ class Invitation extends Model
         'is_active',
         'theme_settings',
         'cover_photo',
+        'home_cover_photo',
+        'current_transaction_id',
         'published_at',
         'expires_at',
     ];
@@ -80,6 +101,25 @@ class Invitation extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(Package::class);
+    }
+
+    /**
+     * @return HasMany<Transaction, $this>
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    /**
+     * The active/last checkout attempt — what the dashboard's "Lanjutkan Pembayaran" reads,
+     * without re-querying transactions ordered by latest.
+     *
+     * @return BelongsTo<Transaction, $this>
+     */
+    public function currentTransaction(): BelongsTo
+    {
+        return $this->belongsTo(Transaction::class);
     }
 
     /**
@@ -172,6 +212,16 @@ class Invitation extends Model
     public function isLive(): bool
     {
         return $this->status === 'published' && $this->is_active;
+    }
+
+    /**
+     * Checked directly against `expires_at` rather than `status === 'expired'` — the daily
+     * `invitations:expire` job only flips status once a day, so this stays accurate for the
+     * hours in between even if the batch job hasn't run yet.
+     */
+    public function hasExpired(): bool
+    {
+        return $this->expires_at !== null && $this->expires_at->isPast();
     }
 
     /**

@@ -1,7 +1,7 @@
 import { useInvitationData } from "./invitation-data-provider";
 import { Divider, CornerOrnament, Monogram } from "./ornaments";
 import { Reveal } from "./reveal";
-import { Section, SectionTitle, PersonCard } from "./sections";
+import { Section, SectionTitle, PersonCard, HomeCoverPhoto } from "./sections";
 
 type HonoreeCopy = { eyebrow: string; title: string; closing: string };
 
@@ -35,7 +35,8 @@ const HONOREE_COPY: Record<string, HonoreeCopy> = {
   corporate: {
     eyebrow: "Acara Perusahaan",
     title: "Tuan Rumah Acara",
-    closing: "Kami mengucapkan terima kasih atas kehadiran Bapak/Ibu sekalian dalam acara perusahaan kami.",
+    closing:
+      "Kami mengucapkan terima kasih atas kehadiran Bapak/Ibu sekalian dalam acara perusahaan kami.",
   },
 };
 
@@ -50,6 +51,7 @@ export function HonoreeHomeSection() {
 
   return (
     <Section id="home">
+      {invitation.homeCoverPhoto && <HomeCoverPhoto src={invitation.homeCoverPhoto} />}
       <CornerOrnament className="-left-6 top-0" />
       <Reveal className="flex flex-col items-center gap-6 text-center">
         <Monogram initials={initials} />
@@ -76,10 +78,18 @@ export function HonoreeSection() {
   return (
     <Section id="mempelai" alt>
       <SectionTitle eyebrow={eyebrow} title={title} />
-      <div className={`grid gap-6 ${honorees.length > 1 ? "sm:grid-cols-2" : "sm:grid-cols-1 sm:justify-items-center"}`}>
+      <div
+        className={`grid gap-6 ${honorees.length > 1 ? "sm:grid-cols-2" : "sm:grid-cols-1 sm:justify-items-center"}`}
+      >
         {honorees.map((h, idx) => (
           <div key={h.nickname} className={honorees.length === 1 ? "sm:max-w-sm" : undefined}>
-            <PersonCard photo={h.photo} name={h.fullName} bio={h.bio} handle={h.handle} delay={idx * 0.15} />
+            <PersonCard
+              photo={h.photo}
+              name={h.fullName}
+              bio={h.bio}
+              handle={h.handle}
+              delay={idx * 0.15}
+            />
           </div>
         ))}
       </div>

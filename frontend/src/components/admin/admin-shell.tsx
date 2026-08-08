@@ -1,6 +1,17 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import type { ReactNode } from "react";
-import { HelpCircle, Image, LogOut, Package, Palette, Sparkles, Users } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import {
+  Bell,
+  HelpCircle,
+  Image,
+  LogOut,
+  Package,
+  Palette,
+  Receipt,
+  Sparkles,
+  Users,
+  Wallet,
+} from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -29,6 +40,8 @@ import { getInitials } from "@/lib/utils";
 const NAV_ITEMS = [
   { to: "/admin", label: "Tema", icon: Palette, exact: true },
   { to: "/admin/packages", label: "Paket", icon: Package, exact: false },
+  { to: "/admin/transactions", label: "Verifikasi Pembayaran", icon: Receipt, exact: false },
+  { to: "/admin/payment-settings", label: "Pengaturan Pembayaran", icon: Wallet, exact: false },
   { to: "/admin/users", label: "Pengguna", icon: Users, exact: false },
   { to: "/admin/banners", label: "Banner", icon: Image, exact: false },
   { to: "/admin/faqs", label: "FAQ", icon: HelpCircle, exact: false },
@@ -40,6 +53,56 @@ function pageTitleFor(pathname: string): string {
   if (pathname.startsWith("/admin/themes")) return "Tema";
   const item = NAV_ITEMS.find((i) => i.to !== "/admin" && pathname.startsWith(i.to));
   return item?.label ?? "Tema";
+}
+
+/** Polls the same "Menunggu Verifikasi" count shown as the default filter on
+ * /admin/transactions, so the badge here and the queue a click lands on always agree. */
+function PaymentVerificationBell() {
+  const navigate = useNavigate();
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadCount() {
+      try {
+        const res = await adminApi.get<{ meta: { total: number } }>(
+          "/transactions?awaiting_verification=1&per_page=1",
+        );
+        if (active) setCount(res.meta.total);
+      } catch {
+        // decorative indicator — a failed poll just leaves the last known count showing
+      }
+    }
+
+    loadCount();
+    const interval = setInterval(loadCount, 60_000);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="relative"
+      aria-label={
+        count > 0
+          ? `${count} pembayaran menunggu verifikasi`
+          : "Tidak ada pembayaran menunggu verifikasi"
+      }
+      onClick={() => navigate({ to: "/admin/transactions" })}
+    >
+      <Bell className="size-4" />
+      {count > 0 && (
+        <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold leading-none text-destructive-foreground">
+          {count > 99 ? "99+" : count}
+        </span>
+      )}
+    </Button>
+  );
 }
 
 export function AdminShell({ user, children }: { user: AdminUser; children: ReactNode }) {
@@ -66,7 +129,7 @@ export function AdminShell({ user, children }: { user: AdminUser; children: Reac
               <Sparkles className="size-5" />
             </div>
             <div className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
-              <span className="font-semibold">Undangan Digital</span>
+              <span className="font-semibold">Undang Akoe</span>
               <span className="text-xs text-muted-foreground">Admin</span>
             </div>
           </div>
@@ -121,6 +184,7 @@ export function AdminShell({ user, children }: { user: AdminUser; children: Reac
             <p className="truncate text-sm font-semibold">{pageTitleFor(pathname)}</p>
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <PaymentVerificationBell />
             <ThemeToggle />
             <Avatar className="size-9">
               <AvatarFallback className="bg-sidebar-accent text-sm font-semibold text-sidebar-accent-foreground">

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\CoupleController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DigitalEnvelopeController;
@@ -16,9 +17,11 @@ use App\Http\Controllers\Api\InvitationStatisticsController;
 use App\Http\Controllers\Api\LoveStoryController;
 use App\Http\Controllers\Api\MusicController;
 use App\Http\Controllers\Api\PackageController;
+use App\Http\Controllers\Api\PaymentSettingController;
 use App\Http\Controllers\Api\PublicStatsController;
 use App\Http\Controllers\Api\ThemeCategoryController;
 use App\Http\Controllers\Api\ThemeController;
+use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -71,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [UserManagementController::class, 'index']);
         Route::patch('{user}/suspend', [UserManagementController::class, 'suspend']);
         Route::patch('{user}/activate', [UserManagementController::class, 'activate']);
+        Route::patch('{user}/verify', [UserManagementController::class, 'verify']);
         Route::put('{user}/role', [UserManagementController::class, 'updateRole']);
         Route::delete('{user}', [UserManagementController::class, 'destroy']);
     });
@@ -95,6 +99,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('packages/{package}', [PackageController::class, 'update'])->middleware('role:admin');
     Route::delete('packages/{package}', [PackageController::class, 'destroy'])->middleware('role:admin');
 
+    Route::middleware('role:admin')->prefix('payment-settings')->group(function () {
+        Route::get('/', [PaymentSettingController::class, 'show']);
+        Route::put('/', [PaymentSettingController::class, 'update']);
+        Route::post('qris', [PaymentSettingController::class, 'uploadQris']);
+        Route::delete('qris', [PaymentSettingController::class, 'removeQris']);
+    });
+
     Route::get('banners', [BannerController::class, 'index']);
     Route::post('banners', [BannerController::class, 'store'])->middleware('role:admin');
     Route::put('banners/{banner}', [BannerController::class, 'update'])->middleware('role:admin');
@@ -112,9 +123,14 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('role:admin');
     Route::patch('invitations/{invitation}/reactivate', [InvitationController::class, 'reactivate'])
         ->middleware('role:admin');
+    Route::patch('invitations/{invitation}/archive', [InvitationController::class, 'archive']);
     Route::patch('invitations/{invitation}/change-theme', [InvitationController::class, 'changeTheme']);
     Route::post('invitations/{invitation}/cover-photo', [InvitationController::class, 'uploadCoverPhoto']);
     Route::delete('invitations/{invitation}/cover-photo', [InvitationController::class, 'removeCoverPhoto']);
+    Route::post('invitations/{invitation}/home-cover-photo', [InvitationController::class, 'uploadHomeCoverPhoto']);
+    Route::delete('invitations/{invitation}/home-cover-photo', [InvitationController::class, 'removeHomeCoverPhoto']);
+
+    Route::post('invitations/{invitation}/checkout', [CheckoutController::class, 'store']);
 
     Route::get('invitations/{invitation}/couples', [CoupleController::class, 'index']);
     Route::put('invitations/{invitation}/couples/{role}', [CoupleController::class, 'upsert'])
@@ -163,4 +179,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('invitations/{invitation}/envelopes/{envelope}', [DigitalEnvelopeController::class, 'destroy']);
 
     Route::get('invitations/{invitation}/statistics', [InvitationStatisticsController::class, 'summary']);
+
+    Route::get('transactions', [TransactionController::class, 'index']);
+    Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
+    Route::post('transactions/{transaction}/proof', [TransactionController::class, 'uploadProof']);
+    Route::patch('transactions/{transaction}/cancel', [TransactionController::class, 'cancel']);
+    Route::patch('transactions/{transaction}/approve', [TransactionController::class, 'approve'])
+        ->middleware('role:admin');
+    Route::patch('transactions/{transaction}/reject', [TransactionController::class, 'reject'])
+        ->middleware('role:admin');
 });

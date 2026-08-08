@@ -57,6 +57,16 @@ class UserManagementController extends Controller
         ]);
     }
 
+    public function verify(User $user): JsonResponse
+    {
+        $user = $this->users->verify($user);
+
+        return response()->json([
+            'message' => 'Pengguna berhasil diverifikasi.',
+            'data' => new UserResource($user),
+        ]);
+    }
+
     public function updateRole(UpdateUserRoleRequest $request, User $user): JsonResponse
     {
         $user = $this->users->updateRole($request->user(), $user, $request->validated('role'));

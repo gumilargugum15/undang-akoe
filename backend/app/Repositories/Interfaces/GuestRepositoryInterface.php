@@ -13,6 +13,8 @@ interface GuestRepositoryInterface
      */
     public function forInvitation(Invitation $invitation): Collection;
 
+    public function countForInvitation(Invitation $invitation): int;
+
     public function create(Invitation $invitation, array $data): Guest;
 
     public function delete(Guest $guest): void;

@@ -98,6 +98,16 @@ function AdminUsersPage() {
     }
   }
 
+  async function handleVerify(user: AdminUser) {
+    try {
+      await adminApi.patch(`/users/${user.id}/verify`);
+      toast.success("Pengguna berhasil diverifikasi.");
+      await loadUsers();
+    } catch (err) {
+      toast.error(err instanceof AdminApiError ? err.message : "Gagal memverifikasi pengguna.");
+    }
+  }
+
   async function handleDelete(user: AdminUser) {
     if (!confirm(`Hapus pengguna "${user.name}"?`)) return;
     try {
@@ -204,6 +214,11 @@ function AdminUsersPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="space-x-1 text-right">
+                    {!user.email_verified_at && (
+                      <Button variant="outline" size="sm" onClick={() => handleVerify(user)}>
+                        Verifikasi
+                      </Button>
+                    )}
                     <Button variant="outline" size="sm" onClick={() => handleToggleActive(user)}>
                       {user.is_active ? "Nonaktifkan" : "Aktifkan"}
                     </Button>

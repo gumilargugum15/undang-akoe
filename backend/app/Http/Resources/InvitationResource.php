@@ -32,16 +32,25 @@ class InvitationResource extends JsonResource
             'theme' => new ThemeResource($this->whenLoaded('theme')),
             // whenLoaded() already returns null itself when the relation is loaded but empty
             // (package_id is nullable) — it never even calls this closure in that case.
+            // requires_payment/price are what the checkout dialog uses to decide whether to
+            // publish directly or route through checkout — see CheckoutDialog on the frontend.
             'package' => $this->whenLoaded('package', fn () => [
+                'id' => $this->package->id,
                 'name' => $this->package->name,
                 'slug' => $this->package->slug,
+                'price' => (float) $this->package->price,
+                'requires_payment' => $this->package->requires_payment,
             ]),
+            // The active/last checkout attempt — lets the dashboard resume "Lanjutkan
+            // Pembayaran" without a separate GET /transactions/{id} round-trip.
+            'current_transaction' => new TransactionResource($this->whenLoaded('currentTransaction')),
             'owner' => $this->when($request->user()?->isAdmin(), fn () => $this->whenLoaded('user', fn () => [
                 'name' => $this->user->name,
                 'email' => $this->user->email,
             ])),
             'theme_settings' => $this->theme_settings,
             'cover_photo' => $this->cover_photo ? Storage::disk('public')->url($this->cover_photo) : null,
+            'home_cover_photo' => $this->home_cover_photo ? Storage::disk('public')->url($this->home_cover_photo) : null,
             'view_count' => $this->view_count,
             'published_at' => $this->published_at?->toIso8601String(),
             'expires_at' => $this->expires_at?->toIso8601String(),

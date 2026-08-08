@@ -14,6 +14,11 @@ class GuestRepository implements GuestRepositoryInterface
         return $invitation->guests()->orderBy('created_at')->get();
     }
 
+    public function countForInvitation(Invitation $invitation): int
+    {
+        return $invitation->guests()->count();
+    }
+
     public function create(Invitation $invitation, array $data): Guest
     {
         return $invitation->guests()->create($data);

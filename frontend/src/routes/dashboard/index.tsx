@@ -10,7 +10,14 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GreetingCard, StatCard } from "@/components/ui/stat-card";
 import { BarStatChart } from "@/components/ui/bar-stat-chart";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { customerApi, CustomerApiError } from "@/lib/customer-api";
 import { useRequireCustomerAuth } from "@/lib/customer-auth";
 
@@ -24,7 +31,7 @@ interface CustomerInvitation {
   slug: string;
   public_url: string;
   event_category: string;
-  status: "draft" | "published" | "expired" | "suspended";
+  status: "draft" | "waiting_payment" | "published" | "expired" | "archived" | "suspended";
   theme: { name: string; thumbnail: string | null } | null;
   view_count: number;
 }
@@ -36,8 +43,10 @@ interface PaginatedInvitations {
 
 const STATUS_LABEL: Record<CustomerInvitation["status"], string> = {
   draft: "Draft",
+  waiting_payment: "Menunggu Pembayaran",
   published: "Terbit",
   expired: "Kedaluwarsa",
+  archived: "Diarsipkan",
   suspended: "Ditangguhkan",
 };
 
@@ -50,7 +59,8 @@ function toWhatsAppNumber(phone: string): string {
 
 function adminVerificationWhatsappUrl(): string {
   const adminPhone = import.meta.env.VITE_ADMIN_WHATSAPP ?? "";
-  const message = "Halo Admin, saya ingin meminta verifikasi email untuk akun Undangan Digital saya agar bisa membuat undangan.";
+  const message =
+    "Halo Admin, saya ingin meminta verifikasi email untuk akun Undang Akoe saya agar bisa membuat undangan.";
   return `https://wa.me/${toWhatsAppNumber(adminPhone)}?text=${encodeURIComponent(message)}`;
 }
 
@@ -74,7 +84,6 @@ function CustomerDashboardPage() {
 
   useEffect(() => {
     if (ready) loadInvitations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready]);
 
   const publishedCount = useMemo(
@@ -103,7 +112,9 @@ function CustomerDashboardPage() {
       }
       await loadInvitations();
     } catch (err) {
-      toast.error(err instanceof CustomerApiError ? err.message : "Gagal mengubah status undangan.");
+      toast.error(
+        err instanceof CustomerApiError ? err.message : "Gagal mengubah status undangan.",
+      );
     }
   }
 
@@ -199,7 +210,10 @@ function CustomerDashboardPage() {
                     </TableCell>
                     <TableCell>{inv.view_count}</TableCell>
                     <TableCell className="space-x-1 text-right">
-                      <Link to="/dashboard/invitations/$invitationId" params={{ invitationId: String(inv.id) }}>
+                      <Link
+                        to="/dashboard/invitations/$invitationId"
+                        params={{ invitationId: String(inv.id) }}
+                      >
                         <Button variant="outline" size="sm">
                           Edit
                         </Button>

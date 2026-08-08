@@ -47,17 +47,54 @@ class InvitationService
         $this->invitations->delete($invitation);
     }
 
+    /**
+     * User-triggered publish action. Only reaches `activate()` for packages that don't
+     * require payment (FREE, or a promo with requires_payment=false) — a paid package must
+     * go through CheckoutService/TransactionService::markPaid() instead, which calls
+     * activate() directly once the transaction is confirmed paid.
+     */
     public function publish(Invitation $invitation): Invitation
+    {
+        if ($invitation->package?->requiresPayment()) {
+            throw ValidationException::withMessages([
+                'package' => ['Paket ini memerlukan pembayaran. Selesaikan checkout terlebih dahulu.'],
+            ]);
+        }
+
+        return $this->activate($invitation);
+    }
+
+    /**
+     * The single place an invitation actually becomes Published — called by publish() for
+     * free packages and by TransactionService once a transaction is verified paid. Re-checks
+     * suspension and package limits every time (defense-in-depth): a paid transaction doesn't
+     * bypass moderation or a since-tightened active-invitation cap.
+     */
+    public function activate(Invitation $invitation): Invitation
     {
         if ($invitation->status === 'suspended') {
             throw ValidationException::withMessages([
-                'status' => ['Undangan yang ditangguhkan admin tidak dapat dipublikasikan sendiri.'],
+                'status' => ['Undangan yang ditangguhkan admin tidak dapat dipublikasikan.'],
             ]);
         }
+
+        // No package selected at all (it's nullable — a customer can skip choosing one) means
+        // no package-derived restrictions apply, same as before packages/payment existed.
+        $maxActive = $invitation->package?->limit('max_active_invitations');
+
+        if ($maxActive !== null
+            && $this->invitations->countActivePublishedForUser($invitation->user_id, $invitation->id) >= $maxActive) {
+            throw ValidationException::withMessages([
+                'package' => ["Batas maksimal {$maxActive} undangan aktif untuk paket ini sudah tercapai."],
+            ]);
+        }
+
+        $durationDays = $invitation->package?->duration_days;
 
         return $this->invitations->update($invitation, [
             'status' => 'published',
             'published_at' => now(),
+            'expires_at' => $durationDays ? now()->addDays($durationDays) : null,
         ]);
     }
 
@@ -69,6 +106,34 @@ class InvitationService
     public function suspend(Invitation $invitation): Invitation
     {
         return $this->invitations->update($invitation, ['status' => 'suspended']);
+    }
+
+    /**
+     * User-initiated hiding after an event is over — distinct from the job-driven `expired`
+     * (time-based) and the admin-only `suspended` (moderation). Doesn't touch expires_at or
+     * any transaction history.
+     */
+    public function archive(Invitation $invitation): Invitation
+    {
+        if (! in_array($invitation->status, ['published', 'expired'], true)) {
+            throw ValidationException::withMessages([
+                'status' => ['Hanya undangan yang sudah published atau expired yang dapat diarsipkan.'],
+            ]);
+        }
+
+        return $this->invitations->update($invitation, ['status' => 'archived']);
+    }
+
+    /**
+     * Reverts a checkout attempt back to Draft — called by TransactionService when a pending
+     * transaction is cancelled by the customer, keeping the filled-in invitation data intact.
+     */
+    public function returnToDraft(Invitation $invitation): Invitation
+    {
+        return $this->invitations->update($invitation, [
+            'status' => 'draft',
+            'current_transaction_id' => null,
+        ]);
     }
 
     public function reactivate(Invitation $invitation): Invitation

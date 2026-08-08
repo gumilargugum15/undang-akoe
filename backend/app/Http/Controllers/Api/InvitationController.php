@@ -60,7 +60,7 @@ class InvitationController extends Controller
     {
         $this->authorize('view', $invitation);
 
-        $invitation->load(['theme.category', 'package', 'user']);
+        $invitation->load(['theme.category', 'package', 'user', 'currentTransaction']);
 
         return response()->json([
             'data' => new InvitationResource($invitation),
@@ -180,6 +180,55 @@ class InvitationController extends Controller
 
         return response()->json([
             'message' => 'Foto sampul berhasil dihapus.',
+            'data' => new InvitationResource($invitation),
+        ]);
+    }
+
+    /**
+     * A separate photo for the Home section header, distinct from the opening-gate cover photo
+     * above — same upload handling, different column (home_cover_photo).
+     */
+    public function uploadHomeCoverPhoto(UploadCoverPhotoRequest $request, Invitation $invitation): JsonResponse
+    {
+        $this->authorize('update', $invitation);
+
+        if ($invitation->home_cover_photo) {
+            Storage::disk('public')->delete($invitation->home_cover_photo);
+        }
+
+        $path = $this->images->storePhoto($request->file('photo'), "invitations/{$invitation->id}/home-cover", maxWidth: 1600);
+        $invitation = $this->invitations->update($invitation, ['home_cover_photo' => $path]);
+
+        return response()->json([
+            'message' => 'Foto sampul halaman home berhasil diunggah.',
+            'data' => new InvitationResource($invitation),
+        ]);
+    }
+
+    public function removeHomeCoverPhoto(Invitation $invitation): JsonResponse
+    {
+        $this->authorize('update', $invitation);
+
+        if ($invitation->home_cover_photo) {
+            Storage::disk('public')->delete($invitation->home_cover_photo);
+        }
+
+        $invitation = $this->invitations->update($invitation, ['home_cover_photo' => null]);
+
+        return response()->json([
+            'message' => 'Foto sampul halaman home berhasil dihapus.',
+            'data' => new InvitationResource($invitation),
+        ]);
+    }
+
+    public function archive(Invitation $invitation): JsonResponse
+    {
+        $this->authorize('update', $invitation);
+
+        $invitation = $this->invitations->archive($invitation);
+
+        return response()->json([
+            'message' => 'Undangan berhasil diarsipkan.',
             'data' => new InvitationResource($invitation),
         ]);
     }

@@ -26,6 +26,7 @@ use App\Repositories\Interfaces\MusicRepositoryInterface;
 use App\Repositories\Interfaces\PackageRepositoryInterface;
 use App\Repositories\Interfaces\ThemeCategoryRepositoryInterface;
 use App\Repositories\Interfaces\ThemeRepositoryInterface;
+use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\InvitationEventRepository;
 use App\Repositories\InvitationRepository;
@@ -35,6 +36,7 @@ use App\Repositories\MusicRepository;
 use App\Repositories\PackageRepository;
 use App\Repositories\ThemeCategoryRepository;
 use App\Repositories\ThemeRepository;
+use App\Repositories\TransactionRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -62,6 +64,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(MusicRepositoryInterface::class, MusicRepository::class);
         $this->app->bind(HonoreeRepositoryInterface::class, HonoreeRepository::class);
         $this->app->bind(GuestRepositoryInterface::class, GuestRepository::class);
+        $this->app->bind(TransactionRepositoryInterface::class, TransactionRepository::class);
     }
 
     /**

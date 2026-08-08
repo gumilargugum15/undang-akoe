@@ -58,4 +58,14 @@ class InvitationRepository implements InvitationRepositoryInterface
             ->when($exceptId, fn ($q) => $q->where('id', '!=', $exceptId))
             ->exists();
     }
+
+    public function countActivePublishedForUser(int $userId, ?int $exceptInvitationId = null): int
+    {
+        return Invitation::query()
+            ->where('user_id', $userId)
+            ->where('status', Invitation::STATUS_PUBLISHED)
+            ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()))
+            ->when($exceptInvitationId, fn ($q) => $q->where('id', '!=', $exceptInvitationId))
+            ->count();
+    }
 }

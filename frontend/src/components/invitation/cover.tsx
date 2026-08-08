@@ -39,26 +39,31 @@ export function Cover({ onOpen, guest }: { onOpen: () => void; guest: string }) 
 
   return (
     <motion.section
-      className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 py-16 text-center"
+      className={
+        customCoverPhoto
+          ? "relative flex min-h-[100dvh] flex-col items-center overflow-hidden text-center"
+          : "relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 py-16 text-center"
+      }
       style={{ backgroundColor: "var(--inv-bg)", backgroundImage: "var(--inv-texture)" }}
       exit={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
       transition={{ duration: 0.7 }}
     >
       {customCoverPhoto ? (
-        <>
+        // A contained block at the top, not a full-bleed background behind the text — a
+        // customer's own photo can carry its own graphics/text (party banners, quote cards,
+        // ...) that would otherwise collide with the name rendered on top of it. Keeping its
+        // bottom edge above the content guarantees they never overlap, whatever the photo is.
+        <div className="relative h-[38vh] w-full shrink-0 overflow-hidden sm:h-[44vh]">
           <img
             src={customCoverPhoto}
             alt="Foto sampul undangan"
-            className="absolute inset-0 size-full object-cover"
+            className="absolute inset-0 size-full object-cover object-[50%_30%]"
           />
           <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 30%, color-mix(in srgb, var(--inv-bg) 65%, transparent) 55%, var(--inv-bg) 78%)",
-            }}
+            className="absolute inset-x-0 bottom-0 h-24"
+            style={{ background: "linear-gradient(180deg, transparent, var(--inv-bg))" }}
           />
-        </>
+        </div>
       ) : (
         showCouplePhoto && (
           <>
@@ -94,7 +99,13 @@ export function Cover({ onOpen, guest }: { onOpen: () => void; guest: string }) 
         </>
       )}
 
-      <div className="relative flex flex-col items-center gap-6">
+      <div
+        className={
+          customCoverPhoto
+            ? "relative flex flex-1 flex-col items-center justify-center gap-6 px-6 py-10"
+            : "relative flex flex-col items-center gap-6"
+        }
+      >
         <motion.p
           className="inv-eyebrow"
           initial={{ opacity: 0, y: 12 }}

@@ -46,7 +46,9 @@ export function GalleryEditor({ invitationId }: { invitationId: number }) {
 
   async function load() {
     try {
-      const res = await customerApi.get<{ data: GalleryItem[] }>(`/invitations/${invitationId}/gallery`);
+      const res = await customerApi.get<{ data: GalleryItem[] }>(
+        `/invitations/${invitationId}/gallery`,
+      );
       setItems(res.data);
     } catch (err) {
       toast.error(err instanceof CustomerApiError ? err.message : "Gagal memuat galeri.");
@@ -88,7 +90,9 @@ export function GalleryEditor({ invitationId }: { invitationId: number }) {
       await load();
     } catch (err) {
       if (err instanceof CustomerApiError && err.errors) {
-        Object.values(err.errors).flat().forEach((msg) => toast.error(msg));
+        Object.values(err.errors)
+          .flat()
+          .forEach((msg) => toast.error(msg));
       } else {
         toast.error(err instanceof CustomerApiError ? err.message : "Gagal menambah item galeri.");
       }
@@ -110,7 +114,13 @@ export function GalleryEditor({ invitationId }: { invitationId: number }) {
       setBulkFiles(null);
       await load();
     } catch (err) {
-      toast.error(err instanceof CustomerApiError ? err.message : "Gagal mengunggah foto.");
+      if (err instanceof CustomerApiError && err.errors) {
+        Object.values(err.errors)
+          .flat()
+          .forEach((msg) => toast.error(msg));
+      } else {
+        toast.error(err instanceof CustomerApiError ? err.message : "Gagal mengunggah foto.");
+      }
     } finally {
       setBulkSaving(false);
     }
@@ -163,13 +173,20 @@ export function GalleryEditor({ invitationId }: { invitationId: number }) {
                 )}
               </div>
               <p className="truncate text-xs text-muted-foreground">{item.caption || "—"}</p>
-              <Button variant="destructive" size="sm" className="w-full" onClick={() => handleDelete(item)}>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="w-full"
+                onClick={() => handleDelete(item)}
+              >
                 Hapus
               </Button>
             </div>
           ))}
           {items.length === 0 && (
-            <p className="col-span-4 text-center text-sm text-muted-foreground">Belum ada item galeri.</p>
+            <p className="col-span-4 text-center text-sm text-muted-foreground">
+              Belum ada item galeri.
+            </p>
           )}
         </div>
       </CardContent>

@@ -24,6 +24,11 @@ class GalleryRepository implements GalleryRepositoryInterface
         return $query->orderBy('sort_order')->get();
     }
 
+    public function countPhotosForInvitation(Invitation $invitation): int
+    {
+        return $invitation->gallery()->where('type', 'photo')->count();
+    }
+
     public function create(Invitation $invitation, array $data): Gallery
     {
         return $invitation->gallery()->create($data);

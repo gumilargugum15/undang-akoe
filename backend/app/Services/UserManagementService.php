@@ -33,6 +33,11 @@ class UserManagementService
         return $this->users->update($target, ['is_active' => true]);
     }
 
+    public function verify(User $target): User
+    {
+        return $this->users->update($target, ['email_verified_at' => now()]);
+    }
+
     public function updateRole(User $actor, User $target, string $role): User
     {
         $this->guardAgainstSelf($actor, $target, 'mengubah peran');

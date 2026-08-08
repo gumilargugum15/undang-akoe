@@ -39,12 +39,35 @@ export function SectionTitle({ eyebrow, title }: { eyebrow: string; title: strin
   );
 }
 
+/**
+ * The same customer-uploaded cover photo shown on the opening Cover screen, repeated as a
+ * full-bleed header for the Home section right after the invitation opens — negative margins
+ * cancel the parent Section's own padding so it reaches the section's true edges, then a
+ * bottom fade hands off into the section's background before the greeting text starts.
+ */
+export function HomeCoverPhoto({ src }: { src: string }) {
+  return (
+    <div className="relative -mx-6 -mt-20 mb-8 h-[32vh] overflow-hidden sm:-mt-24 sm:h-[38vh]">
+      <img
+        src={src}
+        alt="Foto sampul undangan"
+        className="absolute inset-0 size-full object-cover object-[50%_30%]"
+      />
+      <div
+        className="absolute inset-x-0 bottom-0 h-16"
+        style={{ background: "linear-gradient(180deg, transparent, var(--inv-bg))" }}
+      />
+    </div>
+  );
+}
+
 export function HomeSection() {
   const invitation = useInvitationData();
   const initials = `${invitation.brideShort.charAt(0)} & ${invitation.groomShort.charAt(0)}`;
 
   return (
     <Section id="home">
+      {invitation.homeCoverPhoto && <HomeCoverPhoto src={invitation.homeCoverPhoto} />}
       <CornerOrnament className="-left-6 top-0" />
       <Reveal className="flex flex-col items-center gap-6 text-center">
         <Monogram initials={initials} />
@@ -244,7 +267,12 @@ export function EventSection() {
           />
         </div>
         <div className="mt-5 text-center">
-          <a className="inv-btn inv-btn-outline" href={invitation.mapsLink} target="_blank" rel="noreferrer">
+          <a
+            className="inv-btn inv-btn-outline"
+            href={invitation.mapsLink}
+            target="_blank"
+            rel="noreferrer"
+          >
             <MapPin className="size-4" /> Buka di Google Maps
           </a>
         </div>
@@ -281,7 +309,9 @@ export function LoveStorySection() {
                 </p>
               )}
               {s.description && (
-                <p className="mt-3 font-body text-sm leading-relaxed text-inv-text">{s.description}</p>
+                <p className="mt-3 font-body text-sm leading-relaxed text-inv-text">
+                  {s.description}
+                </p>
               )}
             </div>
           </Reveal>
@@ -307,7 +337,10 @@ export function GallerySection() {
       <div className="grid auto-rows-[130px] grid-cols-2 gap-3 sm:auto-rows-[180px]">
         {invitation.gallery.map((g, i) => (
           <Reveal key={g.src} delay={i * 0.08} className={gallerySpan(i)}>
-            <div className="size-full overflow-hidden" style={{ borderRadius: "var(--inv-card-radius)" }}>
+            <div
+              className="size-full overflow-hidden"
+              style={{ borderRadius: "var(--inv-card-radius)" }}
+            >
               <img
                 src={g.src}
                 alt={g.alt}
