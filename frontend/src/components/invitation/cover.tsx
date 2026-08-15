@@ -1,10 +1,19 @@
 import { motion, type TargetAndTransition, type Transition } from "motion/react";
 import { Mail } from "lucide-react";
 import { useInvitationData } from "./invitation-data-provider";
-import { CornerOrnament, Divider, RoseGarland, WeddingFlowers } from "./ornaments";
+import { ArchWatermark, CornerOrnament, Divider, RoseGarland, WeddingFlowers } from "./ornaments";
 import { useInvitationTheme } from "./theme-provider";
 import type { RevealKind } from "@/lib/themes";
 import galleryHero from "@/assets/gallery-4.jpg";
+import khitanIslamicFrame from "@/assets/khitan-islamic-frame.webp";
+import weddingIslamicFrame from "@/assets/wedding-islamic-arch.webp";
+
+// Themes that ship their own illustrated arch/lantern frame as a full-bleed cover
+// background instead of the generic per-ornament texture/CornerOrnament treatment.
+const ISLAMIC_FRAME_BACKGROUNDS: Record<string, string> = {
+  "walimatul-khitan": khitanIslamicFrame,
+  "walimatul-ursy": weddingIslamicFrame,
+};
 
 // How the cover exits when a guest taps "Buka Undangan" — keyed to the same per-theme
 // `reveal` used for in-page scroll reveals (see reveal.tsx), so the moment that actually
@@ -59,19 +68,31 @@ export function Cover({ onOpen, guest }: { onOpen: () => void; guest: string }) 
   // wedding stock photo — shown near-full-strength rather than the stock photo's faint wash,
   // fading into the theme's solid background lower down so the detail card stays readable.
   const customCoverPhoto = invitation.coverPhoto;
+  // Islamic-family themes ship their own illustrated arch/lantern frame (see
+  // docs/UI/khitanan_islamic and docs/UI/pernikahan_islamic) as a full-bleed cover —
+  // it takes over the whole hero instead of stacking with a customer's own uploaded
+  // cover photo, which would otherwise show as a second, differently-cropped copy on top.
+  const islamicFrame = ISLAMIC_FRAME_BACKGROUNDS[theme.id];
+  const showCustomCoverPhoto = customCoverPhoto && !islamicFrame;
 
   return (
     <motion.section
       className={
-        customCoverPhoto
+        showCustomCoverPhoto
           ? "relative flex min-h-[100dvh] flex-col items-center overflow-hidden text-center"
           : "relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 py-16 text-center"
       }
-      style={{ backgroundColor: "var(--inv-bg)", backgroundImage: "var(--inv-texture)" }}
+      style={{
+        backgroundColor: "var(--inv-bg)",
+        backgroundImage: islamicFrame ? `url(${islamicFrame})` : "var(--inv-texture)",
+        backgroundSize: islamicFrame ? "cover" : undefined,
+        backgroundPosition: islamicFrame ? "center" : undefined,
+        backgroundRepeat: islamicFrame ? "no-repeat" : undefined,
+      }}
       exit={EXIT_VARIANTS[theme.reveal]}
       transition={EXIT_TRANSITION[theme.reveal] ?? { duration: 0.7 }}
     >
-      {customCoverPhoto ? (
+      {showCustomCoverPhoto ? (
         // A contained block at the top, not a full-bleed background behind the text — a
         // customer's own photo can carry its own graphics/text (party banners, quote cards,
         // ...) that would otherwise collide with the name rendered on top of it. Keeping its
@@ -114,6 +135,24 @@ export function Cover({ onOpen, guest }: { onOpen: () => void; guest: string }) 
           <RoseGarland />
           <RoseGarland flip />
         </>
+      ) : theme.ornament === "bouquet" ? (
+        // Drawn hugging the top-right corner of its own viewBox — rotating 180°
+        // for the second copy carries the same cluster to the opposite corner
+        // (bottom-left), the same mirroring trick the other kinds use below.
+        <>
+          <CornerOrnament className="right-0 top-0" />
+          <CornerOrnament className="left-0 bottom-0 rotate-180" />
+        </>
+      ) : theme.ornament === "crescent" ? (
+        // The illustrated frame already draws its own arch + corner motifs — layering
+        // ArchWatermark/CornerOrnament on top would just double up the framing.
+        !islamicFrame && (
+          <>
+            <ArchWatermark />
+            <CornerOrnament className="left-0 top-0" />
+            <CornerOrnament className="bottom-0 right-0 rotate-180" />
+          </>
+        )
       ) : (
         <>
           {showCouplePhoto && <WeddingFlowers />}
@@ -124,7 +163,7 @@ export function Cover({ onOpen, guest }: { onOpen: () => void; guest: string }) 
 
       <div
         className={
-          customCoverPhoto
+          showCustomCoverPhoto
             ? "relative flex flex-1 flex-col items-center justify-center gap-6 px-6 py-10"
             : "relative flex flex-col items-center gap-6"
         }

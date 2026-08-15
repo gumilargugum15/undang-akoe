@@ -1,4 +1,4 @@
-export type OrnamentKind = "floral" | "line" | "leaf" | "shimmer";
+export type OrnamentKind = "floral" | "line" | "leaf" | "shimmer" | "bouquet" | "crescent";
 export type RevealKind = "fade" | "slide" | "zoom" | "blur" | "flip" | "curtain" | "bounce";
 
 export type ThemeTokens = {
@@ -31,6 +31,9 @@ export type InvitationTheme = {
   /** small palette used by the theme picker preview */
   swatch: string[];
   texture: string;
+  /** "circle" renders PersonCard photos as round avatars instead of the default
+   * rectangular card — undefined behaves exactly like "rect" for every existing theme. */
+  personCardStyle?: "rect" | "circle";
 };
 
 export const themes: Record<string, InvitationTheme> = {
@@ -165,6 +168,144 @@ export const themes: Record<string, InvitationTheme> = {
     swatch: ["#080b13", "#1e2c4a", "#d4af37", "#e7d08a"],
     texture:
       "radial-gradient(circle at 50% -10%, rgba(212,175,55,0.16), transparent 55%), radial-gradient(circle at 10% 90%, rgba(30,44,74,0.6), transparent 55%)",
+  },
+  blueBotanical: {
+    id: "blue-botanical",
+    name: "Blue Botanical",
+    tagline: "Biru pastel lembut dengan ornamen floral & foto pasangan bulat",
+    ornament: "floral",
+    reveal: "fade",
+    radius: "1.25rem",
+    cardRadius: "2rem",
+    shadow: "0 24px 55px -32px rgba(47, 93, 138, 0.35)",
+    buttonShadow: "0 14px 28px -14px rgba(47, 93, 138, 0.45)",
+    letterSpacing: "0.04em",
+    headWeight: "600",
+    fonts: {
+      head: '"Playfair Display", serif',
+      body: '"Plus Jakarta Sans", sans-serif',
+      script: '"Playfair Display", serif',
+    },
+    tokens: {
+      bg: "#eef5fb",
+      bgAlt: "#e3eef8",
+      surface: "#ffffff",
+      primary: "#2f5d8a",
+      primaryFg: "#ffffff",
+      secondary: "#7ea3c4",
+      accent: "#a9c4dd",
+      text: "#2b3a4a",
+      muted: "#6b8098",
+      border: "#d7e5f0",
+    },
+    swatch: ["#eef5fb", "#d7e5f0", "#7ea3c4", "#2f5d8a"],
+    texture:
+      "radial-gradient(circle at 12% 8%, rgba(126,163,196,0.18), transparent 45%), radial-gradient(circle at 88% 85%, rgba(169,196,221,0.22), transparent 50%)",
+    personCardStyle: "circle",
+  },
+  lavenderBouquet: {
+    id: "lavender-bouquet",
+    name: "Lavender Bouquet",
+    tagline: "Ungu lavender lembut dengan buket mawar rimbun di setiap sudut",
+    ornament: "bouquet",
+    reveal: "fade",
+    radius: "1rem",
+    cardRadius: "1.75rem",
+    shadow: "0 24px 55px -32px rgba(91, 58, 126, 0.45)",
+    buttonShadow: "0 14px 30px -14px rgba(91, 58, 126, 0.55)",
+    letterSpacing: "0.05em",
+    headWeight: "500",
+    fonts: {
+      head: '"Playfair Display", serif',
+      body: '"Cormorant Garamond", serif',
+      script: '"Playfair Display", serif',
+    },
+    tokens: {
+      bg: "#f6f3f9",
+      bgAlt: "#ece4f3",
+      surface: "#ffffff",
+      primary: "#5b3a7e",
+      primaryFg: "#ffffff",
+      secondary: "#8a6bb0",
+      accent: "#c9b8e0",
+      text: "#3a2e46",
+      muted: "#8a7f97",
+      border: "#ddd3ea",
+    },
+    swatch: ["#f6f3f9", "#ddd3ea", "#8a6bb0", "#5b3a7e"],
+    texture:
+      "radial-gradient(circle at 15% 12%, rgba(91,58,126,0.10), transparent 45%), radial-gradient(circle at 85% 88%, rgba(138,107,176,0.14), transparent 50%), radial-gradient(circle at 50% 50%, rgba(180,170,190,0.06), transparent 60%)",
+  },
+  walimatulKhitan: {
+    id: "walimatul-khitan",
+    name: "Walimatul Khitan",
+    tagline: "Zamrud & emas islami dengan bulan sabit, bintang, dan lengkung mihrab",
+    ornament: "crescent",
+    reveal: "fade",
+    radius: "0.75rem",
+    // Rounded top, flat bottom — an arch/mihrab silhouette on every card, not just
+    // a generic rounded rectangle (see ArchWatermark in ornaments.tsx for the same idea).
+    cardRadius: "3rem 3rem 1rem 1rem",
+    shadow: "0 24px 55px -32px rgba(15, 81, 50, 0.4)",
+    buttonShadow: "0 14px 30px -14px rgba(201, 162, 39, 0.5)",
+    letterSpacing: "0.06em",
+    headWeight: "600",
+    fonts: {
+      head: '"Marcellus", serif',
+      body: '"Cormorant Garamond", serif',
+      script: '"Playfair Display", serif',
+    },
+    tokens: {
+      bg: "#faf5e6",
+      bgAlt: "#f2ead2",
+      surface: "#ffffff",
+      primary: "#0f5132",
+      primaryFg: "#fdf6e3",
+      secondary: "#b08d57",
+      accent: "#d4af37",
+      text: "#1c2b22",
+      muted: "#6b7d70",
+      border: "#e6d9b0",
+    },
+    swatch: ["#faf5e6", "#e6d9b0", "#b08d57", "#0f5132"],
+    texture:
+      "radial-gradient(circle at 15% 10%, rgba(212,175,55,0.14), transparent 45%), radial-gradient(circle at 85% 85%, rgba(15,81,50,0.10), transparent 48%)",
+  },
+  walimatulUrsy: {
+    id: "walimatul-ursy",
+    name: "Walimatul Ursy",
+    tagline:
+      "Zamrud malam & emas islami dengan lengkung mihrab, bulan sabit, dan lentera bercahaya",
+    ornament: "crescent",
+    reveal: "blur",
+    radius: "0.5rem",
+    // Same arch/mihrab silhouette as Walimatul Khitan's cards — both dark and light
+    // Islamic themes share this shape so it reads as one family, not two unrelated skins.
+    cardRadius: "3rem 3rem 1rem 1rem",
+    shadow: "0 30px 70px -40px rgba(212, 175, 55, 0.4)",
+    buttonShadow: "0 0 28px -6px rgba(212, 175, 55, 0.55)",
+    letterSpacing: "0.08em",
+    headWeight: "600",
+    fonts: {
+      head: '"Marcellus", serif',
+      body: '"Cormorant Garamond", serif',
+      script: '"Playfair Display", serif',
+    },
+    tokens: {
+      bg: "#0a1f16",
+      bgAlt: "#0f2a1e",
+      surface: "#12332a",
+      primary: "#d4af37",
+      primaryFg: "#0a1f16",
+      secondary: "#1f4a38",
+      accent: "#e7d08a",
+      text: "#f0ece2",
+      muted: "#8fa89a",
+      border: "#24473a",
+    },
+    swatch: ["#0a1f16", "#1f4a38", "#d4af37", "#e7d08a"],
+    texture:
+      "radial-gradient(circle at 50% -10%, rgba(212,175,55,0.15), transparent 55%), radial-gradient(circle at 10% 90%, rgba(15,81,50,0.5), transparent 55%)",
   },
 };
 

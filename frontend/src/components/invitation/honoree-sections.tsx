@@ -1,7 +1,8 @@
 import { useInvitationData } from "./invitation-data-provider";
-import { Divider, CornerOrnament, Monogram } from "./ornaments";
+import { ArchWatermark, Divider, CornerOrnament, Monogram } from "./ornaments";
 import { Reveal } from "./reveal";
 import { Section, SectionTitle, PersonCard, HomeCoverPhoto } from "./sections";
+import { useInvitationTheme } from "./theme-provider";
 
 type HonoreeCopy = { eyebrow: string; title: string; closing: string };
 
@@ -46,12 +47,14 @@ function copyFor(eventCategory: string): HonoreeCopy {
 
 export function HonoreeHomeSection() {
   const invitation = useInvitationData();
+  const { theme } = useInvitationTheme();
   const honorees = invitation.honorees ?? [];
   const initials = honorees.map((h) => h.nickname.charAt(0)).join(" & ") || "?";
 
   return (
     <Section id="home">
       {invitation.homeCoverPhoto && <HomeCoverPhoto src={invitation.homeCoverPhoto} />}
+      {theme.ornament === "crescent" && <ArchWatermark />}
       <CornerOrnament className="-left-6 top-0" />
       <Reveal className="flex flex-col items-center gap-6 text-center">
         <Monogram initials={initials} />
@@ -99,17 +102,22 @@ export function HonoreeSection() {
 
 export function HonoreeFooterSection() {
   const invitation = useInvitationData();
+  const { theme } = useInvitationTheme();
   const honorees = invitation.honorees ?? [];
   const { closing } = copyFor(invitation.eventCategory);
   const names = honorees.map((h) => h.nickname).join(" & ");
+  // See FooterSection in sections.tsx — "bouquet" is drawn hugging top-right instead
+  // of the other kinds' bottom-left, so it needs the 180° flip on the other corner.
+  const bouquet = theme.ornament === "bouquet";
 
   return (
     <footer
       className="relative overflow-hidden px-6 py-20 text-center"
       style={{ backgroundColor: "var(--inv-bg)", backgroundImage: "var(--inv-texture)" }}
     >
-      <CornerOrnament className="bottom-0 left-0" />
-      <CornerOrnament className="right-0 top-0 rotate-180" />
+      {theme.ornament === "crescent" && <ArchWatermark />}
+      <CornerOrnament className={`bottom-0 left-0 ${bouquet ? "rotate-180" : ""}`} />
+      <CornerOrnament className={`right-0 top-0 ${bouquet ? "" : "rotate-180"}`} />
       <Reveal className="relative mx-auto max-w-xl">
         <p className="font-body text-sm leading-relaxed text-inv-muted">{closing}</p>
         <Divider className="my-6" />

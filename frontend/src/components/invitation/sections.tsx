@@ -1,8 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { CalendarDays, Clock, MapPin } from "lucide-react";
 import { useInvitationData } from "./invitation-data-provider";
-import { Divider, CornerOrnament, Monogram } from "./ornaments";
+import { ArchWatermark, Divider, CornerOrnament, Monogram } from "./ornaments";
 import { Reveal } from "./reveal";
+import { useInvitationTheme } from "./theme-provider";
 
 export function Section({
   id,
@@ -63,11 +64,13 @@ export function HomeCoverPhoto({ src }: { src: string }) {
 
 export function HomeSection() {
   const invitation = useInvitationData();
+  const { theme } = useInvitationTheme();
   const initials = `${invitation.brideShort.charAt(0)} & ${invitation.groomShort.charAt(0)}`;
 
   return (
     <Section id="home">
       {invitation.homeCoverPhoto && <HomeCoverPhoto src={invitation.homeCoverPhoto} />}
+      {theme.ornament === "crescent" && <ArchWatermark />}
       <CornerOrnament className="-left-6 top-0" />
       <Reveal className="flex flex-col items-center gap-6 text-center">
         <Monogram initials={initials} />
@@ -99,8 +102,14 @@ export function PersonCard({
   handle: string;
   delay: number;
 }) {
+  const { theme } = useInvitationTheme();
+  const circle = theme.personCardStyle === "circle";
+
   return (
-    <Reveal delay={delay} className="inv-surface overflow-hidden p-6 text-center">
+    <Reveal
+      delay={delay}
+      className={circle ? "p-6 text-center" : "inv-surface overflow-hidden p-6 text-center"}
+    >
       {photo ? (
         <img
           src={photo}
@@ -108,15 +117,35 @@ export function PersonCard({
           width={800}
           height={1000}
           loading="lazy"
-          className="mx-auto aspect-[4/5] w-full max-w-56 object-cover"
-          style={{ borderRadius: "var(--inv-card-radius)" }}
+          className={
+            circle
+              ? "mx-auto aspect-square w-full max-w-40 rounded-full border-4 object-cover"
+              : "mx-auto aspect-[4/5] w-full max-w-56 object-cover"
+          }
+          style={
+            circle
+              ? { borderColor: "var(--inv-surface)", boxShadow: "var(--inv-shadow)" }
+              : { borderRadius: "var(--inv-card-radius)" }
+          }
         />
       ) : (
         // No photo uploaded yet — a CSS initial avatar instead of a mismatched stock
         // photo, since a wedding-couple placeholder doesn't fit every event category.
         <div
-          className="mx-auto flex aspect-[4/5] w-full max-w-56 items-center justify-center"
-          style={{ borderRadius: "var(--inv-card-radius)", backgroundColor: "var(--inv-bg-alt)" }}
+          className={
+            circle
+              ? "mx-auto flex aspect-square w-full max-w-40 items-center justify-center rounded-full border-4"
+              : "mx-auto flex aspect-[4/5] w-full max-w-56 items-center justify-center"
+          }
+          style={
+            circle
+              ? {
+                  borderColor: "var(--inv-surface)",
+                  boxShadow: "var(--inv-shadow)",
+                  backgroundColor: "var(--inv-bg-alt)",
+                }
+              : { borderRadius: "var(--inv-card-radius)", backgroundColor: "var(--inv-bg-alt)" }
+          }
         >
           <span className="inv-heading text-6xl text-inv-secondary">{name.charAt(0)}</span>
         </div>
@@ -254,8 +283,17 @@ export function EventSection() {
           </Reveal>
         ))}
       </div>
+    </Section>
+  );
+}
 
-      <Reveal delay={0.2} className="mt-8">
+export function MapsSection() {
+  const invitation = useInvitationData();
+
+  return (
+    <Section id="maps">
+      <SectionTitle eyebrow="Lokasi" title="Peta Acara" />
+      <Reveal>
         <div className="inv-surface overflow-hidden p-2">
           <iframe
             title="Lokasi acara pernikahan"
@@ -281,14 +319,31 @@ export function EventSection() {
   );
 }
 
+// "Love Story" only fits a couple — the honoree categories reuse this same timeline
+// feature for a different kind of milestone (the child's, the graduate's, the
+// company's), so the heading needs to follow eventCategory just like coupleCopyFor above.
+const STORY_SECTION_COPY: Record<string, { eyebrow: string; title: string }> = {
+  khitan: { eyebrow: "Perjalanan Kami", title: "Kisah Sang Buah Hati" },
+  aqiqah: { eyebrow: "Perjalanan Kami", title: "Kisah Sang Buah Hati" },
+  birthday: { eyebrow: "Perjalanan Kami", title: "Kisah Perjalanan" },
+  graduation: { eyebrow: "Perjalanan Kami", title: "Kisah Perjuangan" },
+  corporate: { eyebrow: "Perjalanan Kami", title: "Momen Penting" },
+};
+
+function storySectionCopyFor(eventCategory: string) {
+  return STORY_SECTION_COPY[eventCategory] ?? { eyebrow: "Perjalanan Kami", title: "Love Story" };
+}
+
 export function LoveStorySection() {
   const invitation = useInvitationData();
 
   if (invitation.loveStories.length === 0) return null;
 
+  const { eyebrow, title } = storySectionCopyFor(invitation.eventCategory);
+
   return (
     <Section id="cerita" alt>
-      <SectionTitle eyebrow="Perjalanan Kami" title="Love Story" />
+      <SectionTitle eyebrow={eyebrow} title={title} />
       <div className="space-y-6">
         {invitation.loveStories.map((s, idx) => (
           <Reveal key={s.title} delay={idx * 0.12} className="inv-surface flex gap-5 p-6">
@@ -357,15 +412,22 @@ export function GallerySection() {
 
 export function FooterSection() {
   const invitation = useInvitationData();
+  const { theme } = useInvitationTheme();
   const { closing } = coupleCopyFor(invitation.eventCategory);
+  // Every other ornament's mass sweeps from its bottom-left corner toward a thin
+  // top-right tail, so the top-right instance is the one that needs the 180° flip.
+  // "bouquet" is drawn the other way around (dense cluster hugging top-right) — flip
+  // the bottom-left instance instead, or its bulk lands in the middle of the text.
+  const bouquet = theme.ornament === "bouquet";
 
   return (
     <footer
       className="relative overflow-hidden px-6 py-20 text-center"
       style={{ backgroundColor: "var(--inv-bg)", backgroundImage: "var(--inv-texture)" }}
     >
-      <CornerOrnament className="bottom-0 left-0" />
-      <CornerOrnament className="right-0 top-0 rotate-180" />
+      {theme.ornament === "crescent" && <ArchWatermark />}
+      <CornerOrnament className={`bottom-0 left-0 ${bouquet ? "rotate-180" : ""}`} />
+      <CornerOrnament className={`right-0 top-0 ${bouquet ? "" : "rotate-180"}`} />
       <Reveal className="relative mx-auto max-w-xl">
         <p className="font-body text-sm leading-relaxed text-inv-muted">{closing}</p>
         <Divider className="my-6" />
