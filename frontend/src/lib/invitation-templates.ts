@@ -45,3 +45,18 @@ const HERO_TAB_LABELS: Record<string, string> = {
 export function heroTabLabel(eventCategory: string): string {
   return HERO_TAB_LABELS[eventCategory] ?? "Mempelai";
 }
+
+// "Cerita"/"Love Story" only reads naturally for a couple (wedding/anniversary) — every
+// honoree category reuses the same timeline feature for a different kind of milestone
+// (the child's, the graduate's, the company's), so the tab needs its own label too.
+const STORY_TAB_LABELS: Record<string, string> = {
+  khitan: "Kisah",
+  aqiqah: "Kisah",
+  birthday: "Kisah",
+  graduation: "Kisah",
+  corporate: "Momen",
+};
+
+export function storyTabLabel(eventCategory: string): string {
+  return STORY_TAB_LABELS[eventCategory] ?? "Cerita";
+}

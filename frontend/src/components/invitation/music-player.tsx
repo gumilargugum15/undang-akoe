@@ -66,7 +66,7 @@ export function MusicPlayer({ opened }: { opened: boolean }) {
 
       {embedUrl && playing && (
         <div
-          className="fixed bottom-20 left-5 z-50 overflow-hidden rounded-xl border border-inv-border"
+          className="fixed bottom-40 left-5 z-50 overflow-hidden rounded-xl border border-inv-border"
           style={{ width: 300, height: 80, boxShadow: "var(--inv-shadow)" }}
         >
           <iframe
@@ -83,7 +83,7 @@ export function MusicPlayer({ opened }: { opened: boolean }) {
       <button
         onClick={toggle}
         aria-label={playing ? "Matikan musik latar" : "Putar musik latar"}
-        className="fixed bottom-5 left-5 z-50 grid size-12 place-items-center rounded-full border border-inv-border bg-inv-surface text-inv-primary transition-transform hover:scale-105"
+        className="fixed bottom-24 left-5 z-50 grid size-12 place-items-center rounded-full border border-inv-border bg-inv-surface text-inv-primary transition-transform hover:scale-105"
         style={{ boxShadow: "var(--inv-shadow)" }}
       >
         {playing ? <Pause className="size-5" /> : <MusicIcon className="size-5" />}

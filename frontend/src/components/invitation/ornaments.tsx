@@ -8,7 +8,7 @@ export function Divider({ className = "" }: { className?: string }) {
 
   return (
     <div className={`flex justify-center ${className}`} aria-hidden="true">
-      {k === "floral" && (
+      {(k === "floral" || k === "bouquet") && (
         <svg
           width="220"
           height="34"
@@ -26,6 +26,27 @@ export function Divider({ className = "" }: { className?: string }) {
           <path d="M92 17c6-5 12-5 18 0-6 5-12 5-18 0Z" stroke="currentColor" strokeWidth="1" />
           <path d="M110 17c6-5 12-5 18 0-6 5-12 5-18 0Z" stroke="currentColor" strokeWidth="1" />
           <circle cx="110" cy="17" r="2" fill="currentColor" />
+        </svg>
+      )}
+      {k === "crescent" && (
+        <svg
+          width="220"
+          height="34"
+          viewBox="0 0 220 34"
+          fill="none"
+          className="text-inv-secondary"
+        >
+          <path d="M8 17h68" stroke="currentColor" strokeWidth="1" />
+          <path d="M150 17h62" stroke="currentColor" strokeWidth="1" />
+          <path
+            d="M104 6a11 11 0 1 0 0 22 9 9 0 0 1 0-22Z"
+            fill="currentColor"
+            className="text-inv-accent"
+          />
+          <path
+            d="M126 11.5l1.4 3.9 3.9 1.4-3.9 1.4-1.4 3.9-1.4-3.9-3.9-1.4 3.9-1.4Z"
+            fill="currentColor"
+          />
         </svg>
       )}
       {k === "line" && <span className="block h-px w-24 bg-inv-border" />}
@@ -65,8 +86,75 @@ export function CornerOrnament({ className = "" }: { className?: string }) {
   const k = theme.ornament;
   if (k === "line") return null;
 
+  // The bouquet cluster reads as a filled floral illustration, not a faint line
+  // sketch — it needs to stay more vivid than the other kinds' 45%, but full
+  // opacity fights the text it sits behind (e.g. FooterSection's closing line).
+  const wrapperOpacity = k === "bouquet" ? "opacity-70" : "opacity-45";
+
   return (
-    <div className={`pointer-events-none absolute opacity-45 ${className}`} aria-hidden="true">
+    <div
+      className={`pointer-events-none absolute ${wrapperOpacity} ${className}`}
+      aria-hidden="true"
+    >
+      {k === "bouquet" && (
+        <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+          <g
+            stroke="currentColor"
+            strokeWidth="1"
+            opacity=".5"
+            className="text-inv-accent"
+            fill="none"
+          >
+            <path d="M50 105C82 75 115 48 192 22" />
+            <path d="M65 122C92 95 122 70 178 50" />
+          </g>
+          <g className="text-inv-accent" fill="currentColor" opacity=".55">
+            <ellipse cx="62" cy="100" rx="17" ry="7" transform="rotate(-38 62 100)" />
+            <ellipse cx="88" cy="80" rx="19" ry="7" transform="rotate(-30 88 80)" />
+            <ellipse cx="118" cy="58" rx="18" ry="7" transform="rotate(-16 118 58)" />
+            <ellipse cx="152" cy="70" rx="15" ry="6" transform="rotate(24 152 70)" />
+            <ellipse cx="178" cy="40" rx="14" ry="6" transform="rotate(10 178 40)" />
+          </g>
+          {/* Layered blooms, largest/darkest nearest the corner, smaller and lighter
+              trailing outward — reads as a gathered bouquet rather than one flat rosette. */}
+          <RoseBloom cx={82} cy={44} scale={1.15} rotate={12} tone="surface" />
+          <RoseBloom cx={118} cy={70} scale={1.35} rotate={-8} tone="secondary" />
+          <RoseBloom cx={155} cy={50} scale={1.55} rotate={18} tone="secondary" />
+          <RoseBloom cx={178} cy={78} scale={1.1} rotate={-15} tone="accent" />
+          <RoseBloom cx={186} cy={20} scale={1.05} rotate={30} tone="accent" />
+          <RoseBloom cx={152} cy={30} scale={2.3} rotate={-10} tone="primary" />
+        </svg>
+      )}
+      {k === "crescent" && (
+        // Same diagonal sweep (bottom-left mass tapering to a top-right accent) as
+        // the "floral" case below, so it lines up correctly at every existing
+        // CornerOrnament call site without needing per-site placement fixes.
+        <svg
+          width="170"
+          height="170"
+          viewBox="0 0 170 170"
+          fill="none"
+          className="text-inv-secondary"
+        >
+          <path d="M4 166C4 96 42 34 118 8" stroke="currentColor" strokeWidth="1" />
+          <path d="M62 134a16 16 0 1 0 0-32 13 13 0 0 1 0 32Z" fill="currentColor" opacity=".4" />
+          <path
+            d="M78 84l1.6 4.4 4.4 1.6-4.4 1.6L78 96l-1.6-4.4L72 90l4.4-1.6Z"
+            fill="currentColor"
+            opacity=".35"
+          />
+          <path
+            d="M100 54l1.3 3.6 3.7 1.4-3.7 1.4L100 64l-1.3-3.6L95 59l3.7-1.4Z"
+            fill="currentColor"
+            opacity=".3"
+          />
+          <circle cx="122" cy="20" r="9" stroke="currentColor" strokeWidth="1" />
+          <path
+            d="M122 14l1.4 4.6 4.6 1.4-4.6 1.4-1.4 4.6-1.4-4.6-4.6-1.4 4.6-1.4Z"
+            fill="currentColor"
+          />
+        </svg>
+      )}
       {k === "floral" && (
         <svg
           width="170"
@@ -141,14 +229,36 @@ export function WeddingFlowers() {
   );
 }
 
-function RoseBloom({ cx, cy, scale = 1 }: { cx: number; cy: number; scale?: number }) {
+function RoseBloom({
+  cx,
+  cy,
+  scale = 1,
+  rotate = 0,
+  tone = "surface",
+}: {
+  cx: number;
+  cy: number;
+  scale?: number;
+  rotate?: number;
+  /** "surface" keeps RoseGarland's original pale outlined look; the other tones
+   * fill solid with a theme color, for a denser illustration like CornerOrnament's
+   * "bouquet" cluster. */
+  tone?: "surface" | "primary" | "secondary" | "accent";
+}) {
+  const toneClass =
+    tone === "primary"
+      ? "text-inv-primary"
+      : tone === "accent"
+        ? "text-inv-accent"
+        : "text-inv-secondary";
   return (
-    <g transform={`translate(${cx} ${cy}) scale(${scale})`}>
+    <g transform={`translate(${cx} ${cy}) rotate(${rotate}) scale(${scale})`}>
       <g
         stroke="currentColor"
         strokeWidth={1 / scale}
-        className="text-inv-secondary"
-        fill="var(--inv-surface)"
+        className={toneClass}
+        fill={tone === "surface" ? "var(--inv-surface)" : "currentColor"}
+        fillOpacity={tone === "surface" ? 1 : 0.85}
       >
         <ellipse cx="0" cy="-10" rx="6" ry="9" />
         <ellipse cx="0" cy="10" rx="6" ry="9" />
@@ -217,16 +327,38 @@ export function RoseGarland({ flip = false }: { flip?: boolean }) {
 export function Monogram({ initials }: { initials: string }) {
   const { theme } = useInvitationTheme();
   const sharp = theme.ornament === "line" || theme.ornament === "shimmer";
+  // A mihrab-like arch (rounded top, flat bottom) instead of a plain circle —
+  // reads as unmistakably Islamic rather than a generic wedding monogram frame.
+  const arch = theme.ornament === "crescent";
   return (
     <div
       className={`mx-auto grid size-20 place-items-center border border-inv-primary/40 text-inv-primary ${
-        sharp ? "" : "rounded-full"
+        arch ? "rounded-t-full" : sharp ? "" : "rounded-full"
       }`}
       style={{ boxShadow: "var(--inv-shadow)" }}
     >
       <span className="whitespace-nowrap font-head text-lg tracking-[var(--inv-tracking)]">
         {initials}
       </span>
+    </div>
+  );
+}
+
+/**
+ * Large pointed-arch outline behind the hero content — the mihrab silhouette that
+ * recurs through the Islamic reference designs (docs/UI/khitanan_islamic). Purely
+ * decorative background, sized loosely so it reads as a watermark, not a frame.
+ */
+export function ArchWatermark({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={`pointer-events-none absolute inset-x-0 bottom-0 flex justify-center overflow-hidden ${className}`}
+      aria-hidden="true"
+    >
+      <div
+        className="h-40 w-56 rounded-t-full border-2 opacity-25 sm:h-52 sm:w-72"
+        style={{ borderColor: "var(--inv-accent)" }}
+      />
     </div>
   );
 }

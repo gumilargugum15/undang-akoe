@@ -1,13 +1,29 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  BookHeart,
+  CalendarDays,
+  Gift as GiftIcon,
+  Heart,
+  Home as HomeIcon,
+  Images,
+  MapPin,
+  MessageCircleHeart,
+} from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { InvitationThemeProvider } from "@/components/invitation/theme-provider";
 import { InvitationDataProvider } from "@/components/invitation/invitation-data-provider";
 import { Cover } from "@/components/invitation/cover";
-import { EventSection, GallerySection, LoveStorySection } from "@/components/invitation/sections";
+import {
+  EventSection,
+  GallerySection,
+  LoveStorySection,
+  MapsSection,
+} from "@/components/invitation/sections";
 import { GiftSection, RsvpAndWishes } from "@/components/invitation/interactive";
 import { MusicPlayer } from "@/components/invitation/music-player";
+import { BottomNav, type NavItem } from "@/components/invitation/bottom-nav";
 import { api, ApiError, getOrCreateSessionId } from "@/lib/api";
 import {
   toGifts,
@@ -16,7 +32,9 @@ import {
   type ApiPublicInvitation,
   type ApiWish,
 } from "@/lib/invitation-adapter";
-import { heroTabLabel, resolveHeroComponents } from "@/lib/invitation-templates";
+import { heroTabLabel, resolveHeroComponents, storyTabLabel } from "@/lib/invitation-templates";
+
+type Page = NavItem & { content: ReactNode };
 
 const INVITATION_NOUN: Record<string, string> = {
   wedding: "Undangan Pernikahan Digital",
@@ -96,15 +114,108 @@ function PublicInvitationPage() {
   };
 
   const { Home, People, Footer } = resolveHeroComponents(invitation.event_category);
-  const nav = [
-    { id: "home", label: "Home" },
-    { id: "mempelai", label: heroTabLabel(invitation.event_category) },
-    { id: "cerita", label: "Cerita" },
-    { id: "acara", label: "Acara" },
-    { id: "galeri", label: "Galeri" },
-    { id: "rsvp", label: "RSVP" },
-    { id: "amplop", label: "Amplop" },
-  ];
+
+  // Only the pages with real content get a tab — Cerita/Galeri/Amplop are skipped
+  // entirely when the couple never added love stories/gallery photos/gift envelopes,
+  // instead of leaving a guest to tap into a blank page.
+  const pages: Page[] = useMemo(() => {
+    const list: Page[] = [
+      { id: "home", label: "Home", icon: HomeIcon, content: <Home /> },
+      {
+        id: "mempelai",
+        label: heroTabLabel(invitation.event_category),
+        icon: Heart,
+        content: <People />,
+      },
+    ];
+    if (legacyInvitation.loveStories.length > 0) {
+      list.push({
+        id: "cerita",
+        label: storyTabLabel(invitation.event_category),
+        icon: BookHeart,
+        content: <LoveStorySection />,
+      });
+    }
+    list.push({ id: "acara", label: "Acara", icon: CalendarDays, content: <EventSection /> });
+    if (legacyInvitation.mapsEmbed) {
+      list.push({ id: "maps", label: "Maps", icon: MapPin, content: <MapsSection /> });
+    }
+    if (legacyInvitation.gallery.length > 0) {
+      list.push({ id: "galeri", label: "Galeri", icon: Images, content: <GallerySection /> });
+    }
+    list.push({
+      id: "rsvp",
+      label: "RSVP",
+      icon: MessageCircleHeart,
+      content: <RsvpAndWishes slug={slug} initialWishes={wishes} />,
+    });
+    if (legacyInvitation.gifts.length > 0) {
+      list.push({ id: "amplop", label: "Amplop", icon: GiftIcon, content: <GiftSection /> });
+    }
+    // The thank-you footer always closes out the journey, whichever tab ends up last.
+    const last = list[list.length - 1];
+    list[list.length - 1] = {
+      ...last,
+      content: (
+        <>
+          {last.content}
+          <Footer />
+        </>
+      ),
+    };
+    return list;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invitation.event_category, slug]);
+
+  const [activeId, setActiveId] = useState(pages[0].id);
+
+  function scrollToSection(id: string) {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // Scrollspy: the bottom nav highlights whichever section currently sits in the
+  // middle band of the viewport, instead of only reacting to a nav tap — every
+  // section is always rendered and scrollable, the nav just tracks position.
+  useEffect(() => {
+    if (!opened) return;
+
+    let observer: IntersectionObserver | null = null;
+    let rafId: number;
+
+    // The content only mounts once Cover's own exit animation finishes (AnimatePresence
+    // mode="wait"), so the section elements may not exist in the DOM the instant `opened`
+    // flips true — poll a frame at a time until they do, rather than observing nothing.
+    function trySetup() {
+      const elements = pages
+        .map((p) => document.getElementById(p.id))
+        .filter((el): el is HTMLElement => el !== null);
+
+      if (elements.length < pages.length) {
+        rafId = requestAnimationFrame(trySetup);
+        return;
+      }
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries.filter((e) => e.isIntersecting);
+          if (visible.length === 0) return;
+          const topMost = visible.reduce((a, b) =>
+            a.boundingClientRect.top < b.boundingClientRect.top ? a : b,
+          );
+          setActiveId(topMost.target.id);
+        },
+        { rootMargin: "-45% 0px -45% 0px", threshold: 0 },
+      );
+      elements.forEach((el) => observer!.observe(el));
+    }
+
+    trySetup();
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      observer?.disconnect();
+    };
+  }, [opened, pages]);
 
   // Fire-and-forget pageview beacon — decoupled from the SSR loader above so crawlers/link
   // previews that only trigger the loader don't inflate the visitor count (Phase 11).
@@ -136,29 +247,13 @@ function PublicInvitationPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6 }}
+                className="pb-24"
               >
-                <nav className="sticky top-0 z-40 border-b border-inv-border/70 bg-inv-bg/85 backdrop-blur">
-                  <div className="mx-auto flex max-w-3xl gap-5 overflow-x-auto px-6 py-3 [scrollbar-width:none]">
-                    {nav.map((n) => (
-                      <a
-                        key={n.id}
-                        href={`#${n.id}`}
-                        className="shrink-0 font-body text-[11px] uppercase tracking-[0.22em] text-inv-muted transition-colors hover:text-inv-primary"
-                      >
-                        {n.label}
-                      </a>
-                    ))}
-                  </div>
-                </nav>
+                {pages.map((p) => (
+                  <div key={p.id}>{p.content}</div>
+                ))}
 
-                <Home />
-                <People />
-                <LoveStorySection />
-                <EventSection />
-                <GallerySection />
-                <RsvpAndWishes slug={slug} initialWishes={wishes} />
-                <GiftSection />
-                <Footer />
+                <BottomNav items={pages} activeId={activeId} onSelect={scrollToSection} />
               </motion.div>
             )}
           </AnimatePresence>

@@ -17,27 +17,6 @@ const TESTIMONIALS = [
     comment:
       "Prosesnya cepat banget, dalam sejam undangan sudah jadi dan bisa langsung dibagikan ke keluarga. Tamu juga jadi lebih mudah RSVP.",
   },
-  {
-    initials: "SD",
-    name: "Sari & Dimas",
-    role: "Pernikahan, Surabaya",
-    rating: 5,
-    comment: "Tema-temanya bagus-bagus dan elegan. Fitur amplop digitalnya sangat membantu karena banyak yang tidak bisa hadir.",
-  },
-  {
-    initials: "NF",
-    name: "Nadia F.",
-    role: "Ulang Tahun, Jakarta",
-    rating: 4,
-    comment: "Suka sekali sama fitur countdown dan musiknya, bikin suasana undangan lebih hidup dan personal.",
-  },
-  {
-    initials: "BW",
-    name: "Budi & Wulan",
-    role: "Pernikahan, Yogyakarta",
-    rating: 5,
-    comment: "Tidak perlu keahlian desain sama sekali. Tinggal isi data dan pilih tema, langsung jadi undangan yang rapi.",
-  },
 ];
 
 export function LandingTestimonials() {
