@@ -1,19 +1,17 @@
 import { motion, type TargetAndTransition, type Transition } from "motion/react";
 import { Mail } from "lucide-react";
 import { useInvitationData } from "./invitation-data-provider";
-import { ArchWatermark, CornerOrnament, Divider, RoseGarland, WeddingFlowers } from "./ornaments";
+import {
+  ArchWatermark,
+  CornerOrnament,
+  Divider,
+  ISLAMIC_FRAME_BACKGROUNDS,
+  RoseGarland,
+  WeddingFlowers,
+} from "./ornaments";
 import { useInvitationTheme } from "./theme-provider";
 import type { RevealKind } from "@/lib/themes";
 import galleryHero from "@/assets/gallery-4.jpg";
-import khitanIslamicFrame from "@/assets/khitan-islamic-frame.webp";
-import weddingIslamicFrame from "@/assets/wedding-islamic-arch.webp";
-
-// Themes that ship their own illustrated arch/lantern frame as a full-bleed cover
-// background instead of the generic per-ornament texture/CornerOrnament treatment.
-const ISLAMIC_FRAME_BACKGROUNDS: Record<string, string> = {
-  "walimatul-khitan": khitanIslamicFrame,
-  "walimatul-ursy": weddingIslamicFrame,
-};
 
 // How the cover exits when a guest taps "Buka Undangan" — keyed to the same per-theme
 // `reveal` used for in-page scroll reveals (see reveal.tsx), so the moment that actually

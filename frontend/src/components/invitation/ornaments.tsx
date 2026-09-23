@@ -1,5 +1,15 @@
 import { motion } from "motion/react";
 import { useInvitationTheme } from "./theme-provider";
+import khitanIslamicFrame from "@/assets/khitan-islamic-frame.webp";
+import weddingIslamicFrame from "@/assets/wedding-islamic-arch.webp";
+
+// Themes that ship their own illustrated arch/lantern frame as a full-bleed Cover
+// background instead of the generic per-ornament texture/CornerOrnament treatment.
+export const ISLAMIC_FRAME_BACKGROUNDS: Record<string, string> = {
+  "walimatul-khitan": khitanIslamicFrame,
+  "walimatul-ursy": weddingIslamicFrame,
+  "tasyakuran-khitan": khitanIslamicFrame,
+};
 
 /** Decorative divider that changes shape per theme. */
 export function Divider({ className = "" }: { className?: string }) {
@@ -84,7 +94,10 @@ export function Divider({ className = "" }: { className?: string }) {
 export function CornerOrnament({ className = "" }: { className?: string }) {
   const { theme } = useInvitationTheme();
   const k = theme.ornament;
-  if (k === "line") return null;
+  // "line" has no corner ornament by design; "tasyakuran-khitan" dropped its cropped
+  // photo corner ornament (looked rough in real testing) without replacing it with
+  // anything else — its Divider/Monogram still use the "bouquet" ornament kind normally.
+  if (k === "line" || theme.id === "tasyakuran-khitan") return null;
 
   // The bouquet cluster reads as a filled floral illustration, not a faint line
   // sketch — it needs to stay more vivid than the other kinds' 45%, but full

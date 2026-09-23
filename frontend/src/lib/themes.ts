@@ -307,6 +307,88 @@ export const themes: Record<string, InvitationTheme> = {
     texture:
       "radial-gradient(circle at 50% -10%, rgba(212,175,55,0.15), transparent 55%), radial-gradient(circle at 10% 90%, rgba(15,81,50,0.5), transparent 55%)",
   },
+  khitananIslamiElegan: {
+    id: "khitanan-islami-elegan",
+    name: "Khitanan Islami Elegan",
+    tagline:
+      "Template undangan khitanan bernuansa Islami dengan desain elegan, floral, dan aksen emas.",
+    // Reuses the "bouquet" rose/leaf corner cluster (see Lavender Bouquet) recolored
+    // cream/gold/sage — cream dominates, gold is the accent, green is only a soft
+    // touch, matching this theme's requested color hierarchy exactly.
+    ornament: "bouquet",
+    reveal: "fade",
+    radius: "1rem",
+    // Rounded top, flat bottom — the same mihrab/arch silhouette used by the other
+    // Islamic themes (Walimatul Khitan/Ursy), so every card reads as one Islamic
+    // theme family even though this one leans floral rather than architectural.
+    cardRadius: "3rem 3rem 1rem 1rem",
+    shadow: "0 24px 55px -32px rgba(169, 118, 45, 0.35)",
+    buttonShadow: "0 14px 30px -14px rgba(201, 162, 39, 0.5)",
+    letterSpacing: "0.05em",
+    headWeight: "600",
+    fonts: {
+      head: '"Playfair Display", serif',
+      body: '"Cormorant Garamond", serif',
+      script: '"Playfair Display", serif',
+    },
+    tokens: {
+      bg: "#fdfaf4",
+      bgAlt: "#f6efe0",
+      surface: "#ffffff",
+      primary: "#a9762d",
+      primaryFg: "#fffaf0",
+      secondary: "#6b8f71",
+      accent: "#d4af37",
+      text: "#3a2f22",
+      muted: "#8a7c68",
+      border: "#e8dcc0",
+    },
+    swatch: ["#fdfaf4", "#e8dcc0", "#6b8f71", "#a9762d"],
+    texture:
+      "radial-gradient(circle at 15% 10%, rgba(212,175,55,0.12), transparent 45%), radial-gradient(circle at 85% 85%, rgba(107,143,113,0.10), transparent 48%)",
+    personCardStyle: "circle",
+  },
+  tasyakuranKhitan: {
+    id: "tasyakuran-khitan",
+    name: "Tasyakuran Khitan",
+    tagline:
+      "Islami hangat dengan bunga magnolia asli & ilustrasi masjid — krem, emas, dan hijau zamrud.",
+    // "bouquet" reuses every existing corner-placement rule already proven for Lavender
+    // Bouquet/Khitanan Islami Elegan (Cover/Home/Footer diagonal + the Footer rotation
+    // fix) — CornerOrnament just swaps in this theme's own cropped photo instead of the
+    // SVG rose cluster (see RASTER_CORNER_ORNAMENTS in ornaments.tsx).
+    ornament: "bouquet",
+    reveal: "fade",
+    radius: "1rem",
+    // Plain soft-rounded cards, not the mihrab arch used by the other Islamic themes —
+    // the reference this theme is drawn from uses simple rounded-rectangle cards.
+    cardRadius: "1.25rem",
+    shadow: "0 24px 55px -32px rgba(31, 92, 63, 0.3)",
+    buttonShadow: "0 14px 30px -14px rgba(184, 134, 47, 0.5)",
+    letterSpacing: "0.05em",
+    headWeight: "600",
+    fonts: {
+      head: '"Playfair Display", serif',
+      body: '"Cormorant Garamond", serif',
+      script: '"Playfair Display", serif',
+    },
+    tokens: {
+      bg: "#fbf6e9",
+      bgAlt: "#f5ecd6",
+      surface: "#ffffff",
+      primary: "#b8862f",
+      primaryFg: "#fffaf0",
+      secondary: "#1f5c3f",
+      accent: "#d4af37",
+      text: "#1c3327",
+      muted: "#7c8a7e",
+      border: "#e8dfc0",
+    },
+    swatch: ["#fbf6e9", "#e8dfc0", "#1f5c3f", "#b8862f"],
+    texture:
+      "radial-gradient(circle at 15% 10%, rgba(212,175,55,0.10), transparent 45%), radial-gradient(circle at 85% 85%, rgba(31,92,63,0.08), transparent 48%)",
+    personCardStyle: "circle",
+  },
 };
 
 export const themeList = Object.values(themes);
